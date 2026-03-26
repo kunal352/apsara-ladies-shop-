@@ -126,18 +126,18 @@ const Billing = () => {
                      key={p.id} 
                      onClick={() => addItem(p)}
                      disabled={p.stock <= 0}
-                     className={`p-6 rounded-3xl border text-left transition-all ${p.stock <= 0 ? 'bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed' : 'bg-white border-slate-100 hover:border-pink-300 hover:bg-pink-50/20 shadow-sm hover:shadow-xl'}`}
+                     className={`p-4 rounded-[24px] border text-left transition-all ${p.stock <= 0 ? 'bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed' : 'bg-white border-slate-100 hover:border-pink-300 hover:bg-pink-50/20 shadow-sm hover:shadow-xl'}`}
                    >
-                     <div className="flex items-center gap-4 mb-4">
-                       <span className="text-3xl">🛍️</span>
+                     <div className="flex items-center gap-3 mb-3">
+                       <span className="text-2xl">🛍️</span>
                        <div>
-                         <h4 className="font-black text-slate-900 leading-none">{p.name}</h4>
-                         <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">{p.category}</p>
+                         <h4 className="font-black text-slate-900 leading-tight text-sm">{p.name}</h4>
+                         <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">{p.category}</p>
                        </div>
                      </div>
-                     <div className="flex justify-between items-center mt-2">
-                       <span className="text-3xl font-black text-slate-900 leading-none">₹{p.price}</span>
-                       <span className={`text-[10px] font-black uppercase ${p.stock < 5 ? 'text-red-500' : 'text-slate-400'}`}>{p.stock} {t.remainingStock}</span>
+                     <div className="flex justify-between items-center mt-1">
+                       <span className="text-xl font-black text-slate-900 leading-none">₹{p.price}</span>
+                       <span className={`text-[9px] font-black uppercase ${p.stock < 5 ? 'text-red-500' : 'text-slate-400'}`}>{p.stock} {t.remainingStock}</span>
                      </div>
                    </button>
                  ))}
@@ -145,74 +145,73 @@ const Billing = () => {
            </div>
         </div>
 
-        {/* Right: Bill Summary */}
-        <div className="space-y-8 relative">
-           <div className="bg-white p-10 rounded-[40px] border-t-8 border-pink-600 shadow-2xl shadow-pink-900/10 sticky top-12">
-              <h2 className="text-2xl font-black text-slate-950 mb-10 flex items-center gap-3 underline decoration-pink-600/20 decoration-8 underline-offset-8 mt-2">
-                 <Receipt className="text-pink-600" /> {t.billing}
+        <div className="space-y-6 relative">
+           <div className="bg-white p-6 rounded-[32px] border-t-8 border-pink-600 shadow-xl shadow-pink-900/5 sticky top-8">
+              <h2 className="text-xl font-black text-slate-950 mb-6 flex items-center gap-2 underline decoration-pink-600/20 decoration-8 underline-offset-4 mt-2">
+                 <Receipt className="text-pink-600" size={20} /> {t.billing}
               </h2>
 
               <div className="space-y-6">
-                 <div className="space-y-4">
+                 <div className="space-y-3">
                     <div className="relative">
-                       <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                       <input className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900" placeholder={t.customerName} value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
+                       <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                       <input className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm" placeholder={t.customerName} value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
                     </div>
                     <div className="relative">
-                       <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                       <input className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900" placeholder={t.mobile} value={customer.mobile} onChange={e => setCustomer({...customer, mobile: e.target.value})} />
+                       <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                       <input className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm" placeholder={t.mobile} value={customer.mobile} onChange={e => setCustomer({...customer, mobile: e.target.value})} />
                     </div>
                  </div>
 
                  <hr className="border-slate-50" />
 
-                 <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                 <div className="space-y-3 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                     {selectedItems.map(item => (
-                      <div key={item.id} className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl group">
+                      <div key={item.id} className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl group transition-all hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100">
                          <div className="flex-1">
-                            <p className="font-black text-slate-900 text-sm leading-none mb-1">{item.name}</p>
-                            <p className="font-bold text-pink-600 text-xs">₹{item.price} x {item.qty}</p>
+                            <p className="font-black text-slate-900 text-xs leading-none mb-1">{item.name}</p>
+                            <p className="font-bold text-pink-600 text-[10px]">₹{item.price} x {item.qty}</p>
                          </div>
-                         <div className="flex items-center gap-3">
-                            <button onClick={() => removeItem(item.id)} className="p-2 bg-white text-slate-300 hover:text-red-500 rounded-xl transition-all shadow-sm"><Trash2 size={16} /></button>
+                         <div className="flex items-center gap-2">
+                            <button onClick={() => removeItem(item.id)} className="p-1.5 bg-white text-slate-300 hover:text-red-500 rounded-lg transition-all shadow-sm"><Trash2 size={14} /></button>
                          </div>
                       </div>
                     ))}
-                    {selectedItems.length === 0 && <p className="text-center py-20 text-slate-400 italic">No items selected.</p>}
+                    {selectedItems.length === 0 && <p className="text-center py-10 text-slate-400 italic text-xs">No items selected.</p>}
                  </div>
 
-                 <div className="bg-slate-950 text-white rounded-[32px] p-8 space-y-6 shadow-2xl shadow-slate-200">
+                 <div className="bg-slate-950 text-white rounded-[24px] p-6 space-y-4 shadow-2xl shadow-slate-200">
                     <div className="flex justify-between items-end">
                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Payable</span>
+                          <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Payable</span>
                           <button 
                             onClick={() => { setIsManual(!isManual); if(!isManual) setManualAmount(totalAmount); }}
-                            className="text-[10px] font-black text-pink-600 uppercase tracking-tighter hover:underline"
+                            className="text-[9px] font-black text-pink-500 uppercase tracking-tighter hover:underline"
                           >
-                            {isManual ? 'Use Auto-Total' : 'Edit Amount Manually'}
+                            {isManual ? 'Auto Total' : 'Edit Manual'}
                           </button>
                        </div>
                        {isManual ? (
-                         <div className="flex items-center gap-2 border-b-4 border-pink-600 pb-1">
-                            <span className="text-2xl font-black text-pink-600">₹</span>
+                         <div className="flex items-center gap-2 border-b-2 border-pink-600 pb-1">
+                            <span className="text-lg font-black text-pink-600">₹</span>
                             <input 
                               type="number" 
                               autoFocus
-                              className="bg-transparent text-5xl font-black text-pink-600 outline-none w-32" 
+                              className="bg-transparent text-3xl font-black text-pink-600 outline-none w-20" 
                               value={manualAmount} 
                               onChange={(e) => setManualAmount(e.target.value)} 
                             />
                          </div>
                        ) : (
-                         <span className="text-5xl font-black text-pink-600">₹{totalAmount}</span>
+                         <span className="text-4xl font-black text-pink-600 leading-none">₹{totalAmount}</span>
                        )}
                     </div>
                     <button 
                       onClick={handleCheckout}
                       disabled={selectedItems.length === 0}
-                      className="w-full bg-pink-600 text-white py-6 rounded-2xl font-black text-2xl hover:opacity-90 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-40"
+                      className="w-full bg-pink-600 text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-40"
                     >
-                      <CreditCard size={28} /> {t.completeSale}
+                      <CreditCard size={20} /> {t.completeSale}
                     </button>
                  </div>
               </div>
@@ -224,54 +223,51 @@ const Billing = () => {
         {showInvoice && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950/70 backdrop-blur-xl z-[200] flex items-center justify-center p-8 active">
              {/* Hidden Print Content (Shown only on paper via CSS) */}
-             <div id="printable-invoice" className="hidden print:block text-slate-900">
-                <div className="text-center mb-10 border-b-2 pb-6">
-                   <h1 className="text-4xl font-black uppercase tracking-widest text-pink-600">Apsara Ladies Shop</h1>
-                   <p className="italic text-slate-400 font-bold tracking-widest">Premium Boutique & Designer Collection</p>
-                   <p className="text-[10px] mt-2 font-black opacity-40">123 Market St, Designer Hub, Pune</p>
+             <div id="printable-invoice" className="hidden print:block text-slate-900 w-[80mm] max-w-full mx-auto p-4">
+                <div className="text-center mb-6 border-b-2 pb-4">
+                   <h1 className="text-xl font-black uppercase tracking-widest text-pink-600 leading-none">{shopDetails.name}</h1>
+                   <p className="italic text-[10px] text-slate-400 font-bold tracking-widest mt-1">{shopDetails.tagline}</p>
                 </div>
                 
-                <div className="flex justify-between mb-8 text-sm">
-                   <div>
-                      <p><b>Bill No:</b> {showInvoice.id}</p>
+                <div className="flex justify-between mb-4 text-[10px]">
+                   <div className="flex-1">
+                      <p><b>Bill No:</b> {showInvoice.id.slice(-6)}</p>
                       <p><b>Date:</b> {new Date(showInvoice.date).toLocaleDateString()}</p>
                    </div>
-                   <div className="text-right">
-                      <p><b>Customer:</b> {showInvoice.customerName}</p>
-                      <p><b>Mobile:</b> {showInvoice.customerMobile}</p>
+                   <div className="text-right flex-1">
+                      <p><b>Cust:</b> {showInvoice.customerName}</p>
+                      <p><b>Mob:</b> {showInvoice.customerMobile}</p>
                    </div>
                 </div>
 
-                <table className="w-full border-collapse mb-8">
-                   <thead className="border-b-2 border-slate-900">
+                <table className="w-full border-collapse mb-4 text-[10px]">
+                   <thead className="border-b-2 border-slate-900 text-left">
                       <tr>
-                        <th className="py-2 text-left">Item Name</th>
-                        <th className="py-2 text-center">Rate</th>
-                        <th className="py-2 text-center">Qty</th>
-                        <th className="py-2 text-right">Amount</th>
+                        <th className="py-1">Item</th>
+                        <th className="py-1 text-center">Qty</th>
+                        <th className="py-1 text-right">Amt</th>
                       </tr>
                    </thead>
                    <tbody className="divide-y border-b-2 border-slate-900">
                       {showInvoice.items.map(i => (
-                        <tr key={i.id} className="py-2">
-                           <td className="py-3 font-bold">{i.name}</td>
-                           <td className="py-3 text-center">₹{i.price}</td>
-                           <td className="py-3 text-center">{i.qty}</td>
-                           <td className="py-3 text-right">₹{i.price * i.qty}</td>
+                        <tr key={i.id} className="py-1">
+                           <td className="py-2 font-bold leading-tight">{i.name}</td>
+                           <td className="py-2 text-center">{i.qty}</td>
+                           <td className="py-2 text-right">₹{i.price * i.qty}</td>
                         </tr>
                       ))}
                    </tbody>
                 </table>
 
-                <div className="flex justify-end pr-4 mt-6">
+                <div className="flex justify-end mt-4">
                    <div className="text-right">
-                      <p className="text-xs uppercase font-black text-slate-400">Grand Total</p>
-                      <p className="text-3xl font-bold">₹{showInvoice.total}/-</p>
+                      <p className="text-[10px] uppercase font-black text-slate-400 leading-none">Grand Total</p>
+                      <p className="text-xl font-black">₹{showInvoice.total}/-</p>
                    </div>
                 </div>
 
-                <div className="mt-20 border-t-2 pt-4 text-center">
-                   <p className="font-bold text-slate-400 italic">"Thank you for your visit – Dress like a queen with Apsara!"</p>
+                <div className="mt-8 border-t-2 pt-2 text-center">
+                   <p className="font-bold text-slate-400 italic text-[8px]">"Thank you! Visit Apsara Store Again."</p>
                 </div>
              </div>
 
