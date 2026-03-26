@@ -7,7 +7,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
 const Billing = () => {
-  const { products, completeBill, shopDetails } = useShop();
+  const { products, completeBill, shopDetails, t, lang, setLang } = useShop();
   const [customer, setCustomer] = useState({ name: '', mobile: '' });
   const [selectedItems, setSelectedItems] = useState([]);
   const [showInvoice, setShowInvoice] = useState(null);
@@ -97,8 +97,8 @@ const Billing = () => {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12 max-w-[1400px]">
       <div className="flex justify-between items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm no-print">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">Billing Center</h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Apsara Ladies Shop - Retail Transaction</p>
+          <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">{t.billing}</h1>
+          <p className="text-pink-600 font-bold uppercase tracking-widest text-[10px]">Apsara General Store - {new Date().toLocaleDateString()}</p>
         </div>
       </div>
 
@@ -108,13 +108,13 @@ const Billing = () => {
            <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm min-h-[600px]">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                 <h2 className="text-2xl font-black text-slate-950 flex items-center gap-3">
-                   <Sparkles className="text-pink-600" /> Collection
+                   <Sparkles className="text-pink-600" /> {t.collection}
                 </h2>
                 <div className="relative w-full md:w-80">
                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                    <input 
                     className="w-full pl-16 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-slate-900 focus:ring-4 focus:ring-pink-100 text-lg" 
-                    placeholder="Search saree, kurti..." 
+                    placeholder={t.search} 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                    />
@@ -129,7 +129,7 @@ const Billing = () => {
                      className={`p-6 rounded-3xl border text-left transition-all ${p.stock <= 0 ? 'bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed' : 'bg-white border-slate-100 hover:border-pink-300 hover:bg-pink-50/20 shadow-sm hover:shadow-xl'}`}
                    >
                      <div className="flex items-center gap-4 mb-4">
-                       <span className="text-3xl">👗</span>
+                       <span className="text-3xl">🛍️</span>
                        <div>
                          <h4 className="font-black text-slate-900 leading-none">{p.name}</h4>
                          <p className="text-[10px] font-black tracking-widest text-slate-400 uppercase">{p.category}</p>
@@ -137,7 +137,7 @@ const Billing = () => {
                      </div>
                      <div className="flex justify-between items-center mt-2">
                        <span className="text-3xl font-black text-slate-900 leading-none">₹{p.price}</span>
-                       <span className={`text-[10px] font-black uppercase ${p.stock < 5 ? 'text-red-500' : 'text-slate-400'}`}>{p.stock} units left</span>
+                       <span className={`text-[10px] font-black uppercase ${p.stock < 5 ? 'text-red-500' : 'text-slate-400'}`}>{p.stock} {t.remainingStock}</span>
                      </div>
                    </button>
                  ))}
@@ -149,18 +149,18 @@ const Billing = () => {
         <div className="space-y-8 relative">
            <div className="bg-white p-10 rounded-[40px] border-t-8 border-pink-600 shadow-2xl shadow-pink-900/10 sticky top-12">
               <h2 className="text-2xl font-black text-slate-950 mb-10 flex items-center gap-3 underline decoration-pink-600/20 decoration-8 underline-offset-8 mt-2">
-                 <Receipt className="text-pink-600" /> Current Bill
+                 <Receipt className="text-pink-600" /> {t.billing}
               </h2>
 
               <div className="space-y-6">
                  <div className="space-y-4">
                     <div className="relative">
                        <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                       <input className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900" placeholder="Customer Name" value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
+                       <input className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900" placeholder={t.customerName} value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
                     </div>
                     <div className="relative">
                        <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                       <input className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900" placeholder="Mobile Number" value={customer.mobile} onChange={e => setCustomer({...customer, mobile: e.target.value})} />
+                       <input className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900" placeholder={t.mobile} value={customer.mobile} onChange={e => setCustomer({...customer, mobile: e.target.value})} />
                     </div>
                  </div>
 
@@ -212,7 +212,7 @@ const Billing = () => {
                       disabled={selectedItems.length === 0}
                       className="w-full bg-pink-600 text-white py-6 rounded-2xl font-black text-2xl hover:opacity-90 transition-all flex items-center justify-center gap-4 active:scale-95 disabled:opacity-40"
                     >
-                      <CreditCard size={28} /> Complete Sale
+                      <CreditCard size={28} /> {t.completeSale}
                     </button>
                  </div>
               </div>

@@ -11,14 +11,15 @@ import Reports from './pages/Reports';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { lang, setLang, t } = useShop();
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
   const links = [
-    { title: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
-    { title: 'New Bill', path: '/billing', icon: <Receipt size={20} /> },
-    { title: 'Inventory', path: '/inventory', icon: <ShoppingBag size={20} /> },
-    { title: 'Sales Reports', path: '/reports', icon: <TrendingUp size={20} /> },
+    { title: t.dashboard, path: '/', icon: <LayoutDashboard size={20} /> },
+    { title: t.billing, path: '/billing', icon: <Receipt size={20} /> },
+    { title: t.inventory, path: '/inventory', icon: <ShoppingBag size={20} /> },
+    { title: t.reports, path: '/reports', icon: <TrendingUp size={20} /> },
   ];
 
   return (
@@ -57,6 +58,21 @@ const Navbar = () => {
               {link.title}
             </Link>
           ))}
+        </div>
+
+        <div className="mt-8 pt-8 border-t border-slate-50 space-y-4">
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-6">Language</p>
+           <div className="flex gap-2 px-4">
+              {['en', 'hi', 'mr'].map(l => (
+                <button 
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className={`flex-1 py-2 rounded-lg font-bold text-xs uppercase ${lang === l ? 'bg-pink-600 text-white shadow-md' : 'bg-slate-50 text-slate-400 hover:bg-pink-50'}`}
+                >
+                  {l === 'en' ? 'EN' : l === 'hi' ? 'HI' : 'MR'}
+                </button>
+              ))}
+           </div>
         </div>
 
         <div className="mt-auto pt-8 border-t border-slate-50 opacity-60">

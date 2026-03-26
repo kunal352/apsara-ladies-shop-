@@ -5,9 +5,9 @@ import { Plus, Edit2, Trash2, X, Save, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Inventory = () => {
-  const { products, addProduct, removeProduct, updateProduct } = useShop();
-  const [showModal, setShowModal] = useState(false);
-  const [editingId, setEditingId] = useState(null);
+  const { products, addProduct, removeProduct, updateProduct, t } = useShop();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({ name: '', category: 'Kurti', price: '', stock: '' });
 
   const categories = ['Kurti', 'Saree', 'Dress', 'Accessories'];
@@ -33,16 +33,16 @@ const Inventory = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10">
-      <div className="flex justify-between items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm gap-6">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">Inventory Ledger</h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Apsara Ladies Shop - Master Stock Control</p>
+          <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">{t.inventory}</h1>
+          <p className="text-pink-600 font-bold uppercase tracking-widest text-[10px]">Apsara General Store - Stock Control</p>
         </div>
         <button 
           onClick={() => { setEditingId(null); setFormData({ name: '', category: 'Kurti', price: '', stock: '' }); setShowModal(true); }}
           className="bg-pink-600 text-white px-8 py-4 rounded-2xl font-black text-lg flex items-center gap-2 shadow-xl shadow-pink-200 hover:-translate-y-1 transition-all"
         >
-          <Plus size={20} /> Add New Arrivals
+          <Plus size={20} /> {t.addProduct}
         </button>
       </div>
 
@@ -50,10 +50,10 @@ const Inventory = () => {
         <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-slate-50/50 border-b border-slate-100 font-black text-slate-400 text-[10px] uppercase tracking-[0.2em] text-center">
             <tr>
-              <th className="px-12 py-10 text-left">Collection Name</th>
-              <th className="px-12 py-10">Selling Price</th>
-              <th className="px-12 py-10">Remaining Stock (Shilak)</th>
-              <th className="px-12 py-10">Total Sold (Gela Stock)</th>
+              <th className="px-12 py-10 text-left">Item Name</th>
+              <th className="px-12 py-10">{t.price}</th>
+              <th className="px-12 py-10">{t.stockShilak}</th>
+              <th className="px-12 py-10">{t.stockGela}</th>
               <th className="px-12 py-10 text-right">Actions</th>
             </tr>
           </thead>
@@ -62,7 +62,7 @@ const Inventory = () => {
               <tr key={p.id} className="hover:bg-pink-50/20 transition-colors group">
                 <td className="px-12 py-8">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-pink-600 font-black text-xl shadow-inner shadow-pink-900/10 transition-transform group-hover:scale-110">👗</div>
+                    <div className="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-pink-600 font-black text-xl shadow-inner shadow-pink-900/10 transition-transform group-hover:scale-110">🛍️</div>
                     <div>
                       <p className="font-black text-slate-900 text-lg uppercase leading-none mb-1">{p.name}</p>
                       <p className="text-[10px] font-black tracking-widest text-pink-600 uppercase border-l-2 border-pink-600 pl-2 ml-1 mt-2">{p.category}</p>
@@ -73,12 +73,12 @@ const Inventory = () => {
                 <td className="px-12 py-8 text-center">
                    <div className={`px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border-2 ${p.stock < 5 ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : 'bg-green-50 border-green-200 text-green-600'}`}>
                      <span className={`w-2 h-2 rounded-full ${p.stock < 5 ? 'bg-red-600' : 'bg-green-600'}`}></span>
-                     {p.stock} Peice Shilak
+                     {p.stock} {t.shilak}
                    </div>
                 </td>
                 <td className="px-12 py-8 text-center">
                    <div className="bg-slate-900 text-slate-400 px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border border-slate-800 shadow-xl shadow-slate-900/50">
-                     <span className="text-white">{p.sold} Peice</span> Sold
+                     <span className="text-white">{p.sold}</span> {t.gela}
                    </div>
                 </td>
                 <td className="px-12 py-8 text-right">

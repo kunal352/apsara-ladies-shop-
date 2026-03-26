@@ -16,28 +16,29 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 const Dashboard = () => {
-  const { products, orders } = useShop();
+  const { products, orders, t } = useShop();
 
-  const totalProducts = products.length;
+  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const totalSold = products.reduce((sum, p) => sum + p.sold, 0);
   const remainingStock = products.reduce((sum, p) => sum + p.stock, 0);
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const totalProducts = products.length;
+
   const lowStockItems = products.filter(p => p.stock < 5);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
-      <div className="flex justify-between items-center">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12 max-w-[1400px]">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm gap-6">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 leading-none mb-3">Shop Dashboard</h1>
-          <p className="text-slate-500 font-bold capitalize">Apsara Ladies Shop Performance Overview</p>
+          <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">{t.dashboard}</h1>
+          <p className="text-pink-600 font-bold uppercase tracking-widest text-[10px]">Apsara General Store - {new Date().toLocaleDateString()}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-        <StatCard title="Total Revenue" value={`₹${totalRevenue}`} icon={<IndianRupee className="text-pink-600" size={28} />} color="bg-pink-50" />
-        <StatCard title="Stock Gela (Sold)" value={`${totalSold} pcs`} icon={<TrendingUp className="text-purple-600" size={28} />} color="bg-purple-50" />
-        <StatCard title="Stock Shilak (Left)" value={`${remainingStock} pcs`} icon={<Package className="text-blue-600" size={28} />} color="bg-blue-50" />
-        <StatCard title="Total Varieties" value={totalProducts} icon={<ShoppingBag className="text-orange-600" size={28} />} color="bg-orange-50" />
+        <StatCard title={t.totalRevenue} value={`₹${totalRevenue}`} icon={<IndianRupee className="text-pink-600" size={28} />} color="bg-pink-50" />
+        <StatCard title={t.stockGela} value={`${totalSold} pcs`} icon={<TrendingUp className="text-purple-600" size={28} />} color="bg-purple-50" />
+        <StatCard title={t.stockShilak} value={`${remainingStock} pcs`} icon={<Package className="text-blue-600" size={28} />} color="bg-blue-50" />
+        <StatCard title={t.varieties} value={totalProducts} icon={<ShoppingBag className="text-orange-600" size={28} />} color="bg-orange-50" />
       </div>
 
       {lowStockItems.length > 0 && (
