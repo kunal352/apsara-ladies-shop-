@@ -105,10 +105,17 @@ const Inventory = () => {
                  </div>
                  <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 mb-2 block">Category</label>
-                      <select className="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-lg text-slate-900" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 mb-2 block">Category (Type or Select)</label>
+                      <input 
+                        list="categories-list"
+                        className="w-full px-8 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-lg text-slate-900 focus:ring-4 focus:ring-pink-100" 
+                        value={formData.category} 
+                        onChange={e => setFormData({...formData, category: e.target.value})}
+                        placeholder="Select or Type..."
+                      />
+                      <datalist id="categories-list">
+                        {categories.map(c => <option key={c} value={c} />)}
+                      </datalist>
                     </div>
                     <div>
                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 mb-2 block text-center">Price (₹)</label>

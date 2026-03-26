@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Receipt, User, Phone, ShoppingCart, Trash2, Plus, Minus, CreditCard, Sparkles, X, CheckCircle, Printer, Download } from 'lucide-react';
+import { Receipt, User, Phone, ShoppingCart, Trash2, Plus, Minus, CreditCard, Sparkles, X, CheckCircle, Printer, Download, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -11,6 +11,13 @@ const Billing = () => {
   const [customer, setCustomer] = useState({ name: '', mobile: '' });
   const [selectedItems, setSelectedItems] = useState([]);
   const [showInvoice, setShowInvoice] = useState(null);
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredProducts = products.filter(p => 
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    p.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const addItem = (product) => {
     if (product.stock <= 0) return toast.error('Out of stock!');
@@ -99,11 +106,22 @@ const Billing = () => {
         {/* Left: Product Selector */}
         <div className="xl:col-span-2 space-y-8">
            <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm min-h-[600px]">
-              <h2 className="text-2xl font-black text-slate-950 mb-10 flex items-center gap-3">
-                 <Sparkles className="text-pink-600" /> Select Collection
-              </h2>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                <h2 className="text-2xl font-black text-slate-950 flex items-center gap-3">
+                   <Sparkles className="text-pink-600" /> Collection
+                </h2>
+                <div className="relative w-full md:w-80">
+                   <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                   <input 
+                    className="w-full pl-16 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-slate-900 focus:ring-4 focus:ring-pink-100 text-lg" 
+                    placeholder="Search saree, kurti..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                   />
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                 {products.map(p => (
+                 {filteredProducts.map(p => (
                    <button 
                      key={p.id} 
                      onClick={() => addItem(p)}
