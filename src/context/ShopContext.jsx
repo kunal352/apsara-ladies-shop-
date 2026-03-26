@@ -52,21 +52,27 @@ export const ShopProvider = ({ children }) => {
 
   const translations = {
     en: {
-      dashboard: "Dashboard", billing: "New Bill", inventory: "Inventory", reports: "Reports",
+      dashboard: "Dashboard", billing: "New Bill", inventory: 'Inventory',
+      searchProducts: 'Search Products...',
+      addProduct: 'Add Product',
       totalRevenue: "Total Revenue", stockGela: "Total Sold (Stock Gela)", stockShilak: "In Stock (Shilak)", varieties: "Total Varieties",
       collection: "Collection", search: "Search items...", customerName: "Customer Name", mobile: "Mobile Number", completeSale: "Complete Sale",
       remainingStock: "In Stock", addProduct: "Add New Item", price: "Price", category: "Category",
       success: "Sale Completed!", error: "Check details!", shilak: "pcs In Stock", gela: "pcs Sold"
     },
     mr: {
-      dashboard: "डॅशबोर्ड", billing: "नवीन बिल", inventory: "इन्व्हेंटरी", reports: "रिपोर्ट्स",
+      dashboard: "डॅशबोर्ड", billing: "नवीन बिल", inventory: "इन्व्हेंटरी",
+      searchProducts: 'वस्तू शोधा...',
+      addProduct: 'नवीन वस्तू जोडा',
       totalRevenue: "एकूण कमाई", stockGela: "विकलेला स्टॉक (गेला)", stockShilak: "शिल्लक स्टॉक", varieties: "एकूण प्रकार",
       collection: "कलेक्शन", search: "वस्तू शोधा...", customerName: "ग्राहकाचे नाव", mobile: "मोबाईल नंबर", completeSale: "विक्री पूर्ण करा",
       remainingStock: "शिल्लक", addProduct: "नवीन वस्तू जोडा", price: "किंमत", category: "कॅटेगरी",
       success: "विक्री पूर्ण झाली!", error: "माहिती तपासा!", shilak: "पीस शिल्लक", gela: "पीस विक्री"
     },
     hi: {
-      dashboard: "डैशबोर्ड", billing: "नया बिल", inventory: "इन्वेंट्री", reports: "रिपोर्ट्स",
+      dashboard: "डैशबोर्ड", billing: "नया बिल", inventory: "इन्वेंट्री",
+      searchProducts: 'सामान खोजें...',
+      addProduct: 'नया सामान जोड़ें',
       totalRevenue: "कुल कमाई", stockGela: "बिका हुआ स्टॉक (गया)", stockShilak: "बचा हुआ स्टॉक", varieties: "कुल प्रकार",
       collection: "कलेक्शन", search: "सामान खोजें...", customerName: "ग्राहक का नाम", mobile: "मोबाइल नंबर", completeSale: "बिक्री पूरी करें",
       remainingStock: "बचा हुआ", addProduct: "नया सामान जोड़ें", price: "कीमत", category: "श्रेणी",

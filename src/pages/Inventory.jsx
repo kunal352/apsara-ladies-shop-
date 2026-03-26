@@ -12,6 +12,13 @@ const Inventory = () => {
 
   const categories = ['Kurti', 'Saree', 'Dress', 'Accessories'];
 
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const filteredProducts = products.filter(p => 
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    p.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const handleSave = (e) => {
     e.preventDefault();
     if (editingId) {
@@ -46,6 +53,19 @@ const Inventory = () => {
         </button>
       </div>
 
+      <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+          <input 
+            type="text" 
+            placeholder={t.searchProducts}
+            className="w-full pl-16 pr-8 py-5 rounded-[24px] bg-slate-50 border-none outline-none font-bold text-lg text-slate-900 focus:ring-4 focus:ring-pink-100 transition-all"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-x-auto custom-scrollbar shadow-xl shadow-slate-200/50">
         <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-slate-50/50 border-b border-slate-100 font-black text-slate-400 text-[10px] uppercase tracking-[0.2em] text-center">
@@ -58,7 +78,7 @@ const Inventory = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {products.map(p => (
+            {filteredProducts.map(p => (
               <tr key={p.id} className="hover:bg-pink-50/20 transition-colors group">
                 <td className="px-12 py-8">
                   <div className="flex items-center gap-4">
