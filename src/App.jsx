@@ -11,7 +11,7 @@ import Reports from './pages/Reports';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { lang, setLang, t } = useShop();
+  const { lang, setLang, t, theme, setTheme, activeTheme } = useShop();
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
@@ -22,27 +22,34 @@ const Navbar = () => {
     { title: t.reports, path: '/reports', icon: <TrendingUp size={20} /> },
   ];
 
+  const themeColors = {
+    pink: 'bg-pink-600',
+    blue: 'bg-blue-600',
+    purple: 'bg-purple-600',
+    emerald: 'bg-emerald-600'
+  };
+
   return (
     <>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-6 right-6 z-[60] p-4 bg-pink-600 text-white rounded-2xl shadow-xl lg:hidden active:scale-90 transition-all"
+        className={`fixed top-6 right-6 z-[60] p-4 ${themeColors[theme]} text-white rounded-2xl shadow-xl lg:hidden active:scale-90 transition-all`}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
       <nav className={`fixed left-0 top-0 h-screen w-72 bg-white border-r border-slate-100 p-8 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center gap-3 mb-12">
-          <div className="bg-pink-600 p-3 rounded-2xl shadow-xl shadow-pink-100">
+        <div className="flex items-center gap-3 mb-10">
+          <div className={`${themeColors[theme]} p-3 rounded-2xl shadow-xl shadow-slate-200`}>
             <Sparkles className="text-white" size={24} />
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-900 leading-none tracking-tight">Apsara</h1>
-            <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">Ladies Shop</span>
+            <span className={`text-[10px] font-black uppercase tracking-widest text-slate-400`}>General Store</span>
           </div>
         </div>
 
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 space-y-2 overflow-y-auto custom-scrollbar pr-2">
           {links.map(link => (
             <Link 
               key={link.path}
@@ -50,8 +57,8 @@ const Navbar = () => {
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-3 px-6 py-4 rounded-xl font-bold transition-all ${
                 isActive(link.path) 
-                  ? 'bg-pink-600 text-white shadow-lg shadow-pink-200' 
-                  : 'text-slate-500 hover:bg-pink-50 hover:text-pink-600'
+                  ? `${themeColors[theme]} text-white shadow-lg shadow-slate-200` 
+                  : `text-slate-500 hover:bg-slate-50 hover:text-slate-900`
               }`}
             >
               {link.icon}
@@ -60,23 +67,38 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="mt-8 pt-8 border-t border-slate-50 space-y-4">
-           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-6">Language</p>
-           <div className="flex gap-2 px-4">
-              {['en', 'hi', 'mr'].map(l => (
-                <button 
-                  key={l}
-                  onClick={() => setLang(l)}
-                  className={`flex-1 py-2 rounded-lg font-bold text-xs uppercase ${lang === l ? 'bg-pink-600 text-white shadow-md' : 'bg-slate-50 text-slate-400 hover:bg-pink-50'}`}
-                >
-                  {l === 'en' ? 'EN' : l === 'hi' ? 'HI' : 'MR'}
-                </button>
-              ))}
+        <div className="mt-6 pt-6 border-t border-slate-50 space-y-6">
+           <div>
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-3">Themes</p>
+             <div className="flex gap-3 px-4">
+                {['pink', 'blue', 'purple', 'emerald'].map(c => (
+                  <button 
+                    key={c}
+                    onClick={() => setTheme(c)}
+                    className={`w-8 h-8 rounded-full transition-all border-4 ${themeColors[c]} ${theme === c ? 'border-indigo-100 scale-125' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                  />
+                ))}
+             </div>
+           </div>
+
+           <div>
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-3">Language</p>
+             <div className="flex gap-2 px-4">
+                {['en', 'hi', 'mr'].map(l => (
+                  <button 
+                    key={l}
+                    onClick={() => setLang(l)}
+                    className={`flex-1 py-2 rounded-lg font-bold text-[10px] uppercase transition-all ${lang === l ? `${themeColors[theme]} text-white shadow-md` : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
+                  >
+                    {l === 'en' ? 'EN' : l === 'hi' ? 'HI' : 'MR'}
+                  </button>
+                ))}
+             </div>
            </div>
         </div>
 
-        <div className="mt-auto pt-8 border-t border-slate-50 opacity-60">
-           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Version 1.0.0 Business</p>
+        <div className="mt-8 pt-8 border-t border-slate-50 opacity-40">
+           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Version 1.2.0 Business Pro</p>
         </div>
       </nav>
 

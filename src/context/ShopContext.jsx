@@ -48,7 +48,15 @@ export const ShopProvider = ({ children }) => {
   const removeProduct = (id) => setProducts(prev => prev.filter(p => p.id !== id));
   const updateProduct = (id, updated) => setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
   
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState('mr');
+  const [theme, setTheme] = useState('pink');
+
+  const themes = {
+    pink: { primary: 'pink-600', secondary: 'pink-50', text: 'text-pink-600', bg: 'bg-pink-600', hover: 'hover:bg-pink-700' },
+    blue: { primary: 'blue-600', secondary: 'blue-50', text: 'text-blue-600', bg: 'bg-blue-600', hover: 'hover:bg-blue-700' },
+    purple: { primary: 'purple-600', secondary: 'purple-50', text: 'text-purple-600', bg: 'bg-purple-600', hover: 'hover:bg-purple-700' },
+    emerald: { primary: 'emerald-600', secondary: 'emerald-50', text: 'text-emerald-600', bg: 'bg-emerald-600', hover: 'hover:bg-emerald-700' },
+  };
 
   const translations = {
     en: {
@@ -117,16 +125,10 @@ export const ShopProvider = ({ children }) => {
 
   return (
     <ShopContext.Provider value={{ 
-      shopDetails, 
-      products, 
-      addProduct, 
-      removeProduct,
-      updateProduct,
-      orders,
-      completeBill,
-      lang,
-      setLang,
-      t
+      products, orders, shopDetails,
+      addProduct, removeProduct, updateProduct, completeBill,
+      lang, setLang, t, 
+      theme, setTheme, themes, activeTheme
     }}>
       {children}
     </ShopContext.Provider>
