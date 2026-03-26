@@ -116,20 +116,28 @@ function App() {
   return (
     <ShopProvider>
       <Router>
-        <div className="min-h-screen flex bg-slate-50 font-inter overflow-x-hidden">
-          <Navbar />
-          <main className="flex-1 lg:ml-72 p-6 md:p-12 transition-all">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/billing" element={<Billing />} />
-              <Route path="/reports" element={<Reports />} />
-            </Routes>
-          </main>
-          <Toaster position="top-right" />
-        </div>
+        <ThemeContainer />
       </Router>
     </ShopProvider>
+  );
+}
+
+const ThemeContainer = () => {
+  const { activeTheme } = useShop();
+  
+  return (
+    <div className={`min-h-screen flex bg-${activeTheme.secondary} font-inter overflow-x-hidden transition-colors duration-500`}>
+      <Navbar />
+      <main className="flex-1 lg:ml-72 p-6 md:p-12 transition-all">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/billing" element={<Billing />} />
+          <Route path="/reports" element={<Reports />} />
+        </Routes>
+      </main>
+      <Toaster position="top-right" />
+    </div>
   );
 }
 
