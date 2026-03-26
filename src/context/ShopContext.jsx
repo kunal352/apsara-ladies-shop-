@@ -48,8 +48,16 @@ export const ShopProvider = ({ children }) => {
   const removeProduct = (id) => setProducts(prev => prev.filter(p => p.id !== id));
   const updateProduct = (id, updated) => setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
   
-  const [lang, setLang] = useState('mr');
-  const [theme, setTheme] = useState('pink');
+  const [lang, setLang] = useState(() => localStorage.getItem('apsara_lang') || 'mr');
+  const [theme, setTheme] = useState(() => localStorage.getItem('apsara_theme') || 'pink');
+
+  useEffect(() => {
+    localStorage.setItem('apsara_lang', lang);
+  }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem('apsara_theme', theme);
+  }, [theme]);
 
   const themes = {
     pink: { hex: '#be185d', secondaryHex: '#fdf2f8', primary: 'pink-600', secondary: 'pink-50', text: 'text-pink-600', bg: 'bg-pink-600', hover: 'hover:bg-pink-700' },
