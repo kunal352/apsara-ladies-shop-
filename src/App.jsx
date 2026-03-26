@@ -124,9 +124,14 @@ function App() {
 
 const ThemeContainer = () => {
   const { activeTheme } = useShop();
+
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--primary', activeTheme.hex);
+    document.documentElement.style.setProperty('--secondary', activeTheme.secondaryHex);
+  }, [activeTheme]);
   
   return (
-    <div className={`min-h-screen flex bg-${activeTheme.secondary} font-inter overflow-x-hidden transition-colors duration-500`}>
+    <div className="min-h-screen flex transition-colors duration-500" style={{ backgroundColor: activeTheme.secondaryHex }}>
       <Navbar />
       <main className="flex-1 lg:ml-72 p-6 md:p-12 transition-all">
         <Routes>

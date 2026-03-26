@@ -52,10 +52,10 @@ export const ShopProvider = ({ children }) => {
   const [theme, setTheme] = useState('pink');
 
   const themes = {
-    pink: { primary: 'pink-600', secondary: 'pink-50', text: 'text-pink-600', bg: 'bg-pink-600', hover: 'hover:bg-pink-700' },
-    blue: { primary: 'blue-600', secondary: 'blue-50', text: 'text-blue-600', bg: 'bg-blue-600', hover: 'hover:bg-blue-700' },
-    purple: { primary: 'purple-600', secondary: 'purple-50', text: 'text-purple-600', bg: 'bg-purple-600', hover: 'hover:bg-purple-700' },
-    emerald: { primary: 'emerald-600', secondary: 'emerald-50', text: 'text-emerald-600', bg: 'bg-emerald-600', hover: 'hover:bg-emerald-700' },
+    pink: { hex: '#be185d', secondaryHex: '#fdf2f8', primary: 'pink-600', secondary: 'pink-50', text: 'text-pink-600', bg: 'bg-pink-600', hover: 'hover:bg-pink-700' },
+    blue: { hex: '#2563eb', secondaryHex: '#eff6ff', primary: 'blue-600', secondary: 'blue-50', text: 'text-blue-600', bg: 'bg-blue-600', hover: 'hover:bg-blue-700' },
+    purple: { hex: '#9333ea', secondaryHex: '#f5f3ff', primary: 'purple-600', secondary: 'purple-50', text: 'text-purple-600', bg: 'bg-purple-600', hover: 'hover:bg-purple-700' },
+    emerald: { hex: '#059669', secondaryHex: '#ecfdf5', primary: 'emerald-600', secondary: 'emerald-50', text: 'text-emerald-600', bg: 'bg-emerald-600', hover: 'hover:bg-emerald-700' },
   };
 
   const translations = {

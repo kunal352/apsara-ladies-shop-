@@ -233,7 +233,7 @@ const Billing = () => {
                     <button 
                       onClick={handleCheckout}
                       disabled={selectedItems.length === 0}
-                      className={`w-full bg-${activeTheme.primary} text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-40 shadow-xl shadow-${activeTheme.primary}/20`}
+                      className="w-full theme-bg text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-40 shadow-xl"
                     >
                       <CreditCard size={20} /> {t.completeSale}
                     </button>

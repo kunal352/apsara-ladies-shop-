@@ -26,7 +26,32 @@
 
 :root {
   --primary: #be185d;
-  --secondary: #6d28d9;
+  --secondary: #fdf2f8;
+}
+
+.theme-bg {
+  background-color: var(--primary) !important;
+}
+
+.theme-bg-secondary {
+  background-color: var(--secondary) !important;
+}
+
+.theme-text {
+  color: var(--primary) !important;
+}
+
+.theme-border {
+  border-color: var(--primary) !important;
+}
+
+.theme-hover:hover {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.theme-hover-secondary:hover {
+  background-color: var(--secondary) !important;
 }
 
 body {

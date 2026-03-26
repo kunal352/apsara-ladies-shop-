@@ -43,11 +43,11 @@ const Inventory = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm gap-6">
         <div>
           <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">{t.inventory}</h1>
-          <p className={`font-bold uppercase tracking-widest text-[10px] text-${activeTheme.primary}`}>Apsara General Store - Stock Control</p>
+          <p className="font-bold uppercase tracking-widest text-[10px] theme-text">Apsara General Store - Stock Control</p>
         </div>
         <button 
           onClick={() => { setEditingId(null); setFormData({ name: '', category: 'Kurti', price: '', stock: '' }); setShowModal(true); }}
-          className={`bg-${activeTheme.primary} text-white px-8 py-4 rounded-2xl font-black text-lg flex items-center gap-2 shadow-xl shadow-${activeTheme.primary}/20 hover:-translate-y-1 transition-all`}
+          className="theme-bg text-white px-8 py-4 rounded-2xl font-black text-lg flex items-center gap-2 shadow-xl hover:-translate-y-1 transition-all"
         >
           <Plus size={20} /> {t.addProduct}
         </button>
@@ -59,7 +59,7 @@ const Inventory = () => {
           <input 
             type="text" 
             placeholder={t.searchProducts}
-            className={`w-full pl-16 pr-8 py-5 rounded-[24px] bg-slate-50 border-none outline-none font-bold text-lg text-slate-900 focus:ring-4 focus:ring-${activeTheme.secondary} transition-all`}
+            className="w-full pl-16 pr-8 py-5 rounded-[24px] bg-slate-50 border-none outline-none font-bold text-lg text-slate-900 focus:ring-4 transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -79,19 +79,19 @@ const Inventory = () => {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredProducts.map(p => (
-              <tr key={p.id} className={`hover:bg-${activeTheme.secondary}/20 transition-colors group`}>
+              <tr key={p.id} className="transition-colors group theme-hover-secondary">
                 <td className="px-12 py-8">
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 bg-${activeTheme.secondary} rounded-2xl flex items-center justify-center text-${activeTheme.primary} font-black text-xl shadow-inner shadow-slate-900/10 transition-transform group-hover:scale-110`}>🛍️</div>
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner shadow-slate-900/10 transition-transform group-hover:scale-110 theme-bg-secondary theme-text">🛍️</div>
                     <div>
                       <p className="font-black text-slate-900 text-lg uppercase leading-none mb-1">{p.name}</p>
-                      <p className={`text-[10px] font-black tracking-widest text-${activeTheme.primary} uppercase border-l-2 border-${activeTheme.primary} pl-2 ml-1 mt-2`}>{p.category}</p>
+                      <p className="text-[10px] font-black tracking-widest uppercase border-l-2 pl-2 ml-1 mt-2 theme-text theme-border">{p.category}</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-12 py-8 text-center font-black text-2xl text-slate-900">₹{p.price}</td>
                 <td className="px-12 py-8 text-center">
-                   <div className={`px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border-2 ${p.stock < 5 ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : `bg-green-50 border-green-200 text-green-600`}`}>
+                   <div className={`px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border-2 ${p.stock < 5 ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : 'bg-green-50 border-green-200 text-green-600'}`}>
                      <span className={`w-2 h-2 rounded-full ${p.stock < 5 ? 'bg-red-600' : 'bg-green-600'}`}></span>
                      {p.stock} {t.shilak}
                    </div>
@@ -102,7 +102,7 @@ const Inventory = () => {
                    </div>
                 </td>
                 <td className="px-12 py-8 text-right">
-                   <button onClick={() => startEdit(p)} className={`p-3 text-slate-400 hover:text-${activeTheme.primary} transition-colors mr-2`}><Edit2 size={20} /></button>
+                   <button onClick={() => startEdit(p)} className="p-3 text-slate-400 transition-colors mr-2 hover:theme-text"><Edit2 size={20} /></button>
                    <button onClick={() => removeProduct(p.id)} className="p-3 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={20} /></button>
                 </td>
               </tr>
