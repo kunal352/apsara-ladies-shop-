@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #be185d;
+  --secondary: #6d28d9;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  @apply bg-apsara-light text-slate-800;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Outfit', sans-serif;
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl;
+}
+
+.btn-primary {
+  @apply bg-apsara-pink text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg shadow-pink-200 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:opacity-90;
+}
+
+.btn-secondary {
+  @apply bg-white text-slate-700 px-6 py-2.5 rounded-xl border border-slate-200 font-semibold transition-all hover:bg-slate-50;
+}
+
+.input-field {
+  @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-apsara-pink/20 focus:border-apsara-pink transition-all;
+}
