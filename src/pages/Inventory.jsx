@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit2, Trash2, X, Save, ShoppingBag } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, ShoppingBag, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Inventory = () => {

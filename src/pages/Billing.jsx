@@ -71,7 +71,7 @@ const Billing = () => {
 
     doc.setFontSize(12);
     doc.setTextColor(0);
-    doc.text(`Bill No: ${bill.id}`, 10, 45);
+    doc.text(`Bill No: ${bill.id.slice(-6)}`, 10, 45);
     doc.text(`Date: ${new Date(bill.date).toLocaleDateString()}`, 10, 52);
     doc.text(`Customer: ${bill.customerName}`, 140, 45);
     doc.text(`Mobile: ${bill.customerMobile}`, 140, 52);
@@ -90,8 +90,8 @@ const Billing = () => {
     doc.text(`GRAND TOTAL: Rs.${bill.total}/-`, 140, finalY);
 
     doc.setFontSize(10);
-    doc.text('Thank you for shopping at Apsara Ladies Shop! Visit again.', 105, finalY + 25, { align: 'center' });
-    doc.save(`Apsara_Bill_${bill.id}.pdf`);
+    doc.text(`${t.thankYou} - ${shopDetails.name}`, 105, finalY + 25, { align: 'center' });
+    doc.save(`Apsara_Bill_${bill.id.slice(-6)}.pdf`);
   };
 
   return (
@@ -99,7 +99,7 @@ const Billing = () => {
       <div className="flex justify-between items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm no-print">
         <div>
           <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">{t.billing}</h1>
-          <p className="text-pink-600 font-bold uppercase tracking-widest text-[10px]">Apsara General Store - {new Date().toLocaleDateString()}</p>
+          <p className="text-pink-600 font-bold uppercase tracking-widest text-[10px]">{shopDetails.name} - {new Date().toLocaleDateString()}</p>
         </div>
       </div>
 
@@ -108,13 +108,13 @@ const Billing = () => {
         <div className="xl:col-span-2 space-y-8">
            <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm min-h-[600px]">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-                <h2 className="text-2xl font-black text-slate-950 flex items-center gap-3">
+                <h2 className="text-2xl font-black text-slate-950 flex items-center gap-3 leading-none">
                    <Sparkles className="text-pink-600" /> {t.collection}
                 </h2>
                 <div className="relative w-full md:w-80">
                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                    <input 
-                    className="w-full pl-16 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-slate-900 focus:ring-4 focus:ring-pink-100 text-lg" 
+                    className="w-full pl-16 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-slate-900 focus:ring-4 focus:ring-pink-100 text-lg shadow-inner" 
                     placeholder={t.search} 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -132,13 +132,13 @@ const Billing = () => {
                      <div className="flex items-center gap-3 mb-3">
                        <span className="text-2xl">🛍️</span>
                        <div>
-                         <h4 className="font-black text-slate-900 leading-tight text-sm">{p.name}</h4>
+                         <h4 className="font-black text-slate-900 leading-tight text-sm uppercase">{p.name}</h4>
                          <p className="text-[9px] font-black tracking-widest text-slate-400 uppercase">{p.category}</p>
                        </div>
                      </div>
                      <div className="flex justify-between items-center mt-1">
                        <span className="text-xl font-black text-slate-900 leading-none">₹{p.price}</span>
-                       <span className={`text-[9px] font-black uppercase ${p.stock < 5 ? 'text-red-500' : 'text-slate-400'}`}>{p.stock} {t.remainingStock}</span>
+                       <span className={`text-[9px] font-black uppercase ${p.stock < 5 ? 'text-red-500 font-black' : 'text-slate-400'}`}>{p.stock} {t.shilak}</span>
                      </div>
                    </button>
                  ))}
@@ -171,7 +171,7 @@ const Billing = () => {
                        <input 
                         type="tel"
                         maxLength="10"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-pink-100 transition-all" 
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-pink-100 transition-all font-mono tracking-wider" 
                         placeholder={t.mobile} 
                         value={customer.mobile} 
                         onChange={e => {
@@ -188,7 +188,7 @@ const Billing = () => {
                     {selectedItems.map(item => (
                       <div key={item.id} className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl group transition-all hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100">
                          <div className="flex-1">
-                            <p className="font-black text-slate-900 text-xs leading-none mb-1">{item.name}</p>
+                            <p className="font-black text-slate-900 text-[11px] leading-tight mb-1 uppercase">{item.name}</p>
                             <p className="font-bold text-pink-600 text-[10px]">₹{item.price} x {item.qty}</p>
                          </div>
                          <div className="flex items-center gap-2">
@@ -270,9 +270,9 @@ const Billing = () => {
                    <tbody className="divide-y border-b-2 border-slate-900">
                       {showInvoice.items.map(i => (
                         <tr key={i.id} className="py-1">
-                           <td className="py-2 font-bold leading-tight">{i.name}</td>
+                           <td className="py-2 font-bold leading-tight uppercase">{i.name}</td>
                            <td className="py-2 text-center">{i.qty}</td>
-                           <td className="py-2 text-right">₹{i.price * i.qty}</td>
+                           <td className="py-2 text-right font-bold">₹{i.price * i.qty}</td>
                         </tr>
                       ))}
                    </tbody>
@@ -286,38 +286,38 @@ const Billing = () => {
                 </div>
 
                 <div className="mt-8 border-t-2 pt-2 text-center">
-                   <p className="font-bold text-slate-400 italic text-[8px]">"Thank you! Visit Apsara Store Again."</p>
+                   <p className="font-bold text-slate-400 italic text-[10px] tracking-wide">{t.thankYou}</p>
                 </div>
              </div>
 
              {/* On-Screen Success Modal */}
              <motion.div initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl relative no-print">
-                <div className="bg-pink-600 p-12 text-center text-white">
-                   <button onClick={() => setShowInvoice(null)} className="absolute top-10 right-10 opacity-50 hover:opacity-100"><X /></button>
-                   <div className="bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-xl border border-white/20">
+                <div className="bg-pink-600 p-12 text-center text-white relative">
+                   <button onClick={() => setShowInvoice(null)} className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors"><X/></button>
+                   <div className="bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-xl border border-white/40 shadow-xl">
                      <CheckCircle size={40} />
                    </div>
-                   <h2 className="text-4xl font-black mb-1 leading-none mt-2">Sale Complete!</h2>
-                   <p className="text-[10px] uppercase font-black tracking-widest border-t border-white/20 pt-4 mt-2">Invoice Generated Successfully</p>
+                   <h2 className="text-4xl font-black mb-1 leading-none mt-2">{t.saleComplete}</h2>
+                   <p className="text-[10px] uppercase font-black tracking-widest border-t border-white/20 pt-4 mt-2">{t.invoiceGenerated}</p>
                 </div>
                 
                 <div className="p-12 space-y-8">
                    <div className="flex justify-between pb-8 border-b border-slate-50 text-center">
-                      <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Customer</p><p className="font-bold text-slate-800">{showInvoice.customerName}</p></div>
-                      <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p><p className="text-2xl font-black text-pink-600">₹{showInvoice.total}</p></div>
+                      <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t.customerName}</p><p className="font-bold text-slate-950 uppercase">{showInvoice.customerName}</p></div>
+                      <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p><p className="text-2xl font-black text-pink-600 leading-none underline decoration-4 decoration-pink-600/10">₹{showInvoice.total}</p></div>
                    </div>
 
                    <div className="grid grid-cols-2 gap-4">
                       <button onClick={() => window.print()} className="flex items-center justify-center gap-2 bg-slate-900 text-white py-5 rounded-2xl font-black hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-slate-200">
-                         <Printer size={20} /> Print Bill
+                         <Printer size={20} /> {t.printBill}
                       </button>
                       <button onClick={() => generatePDF(showInvoice)} className="flex items-center justify-center gap-2 bg-pink-600 text-white py-5 rounded-2xl font-black hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-pink-200">
-                         <Download size={20} /> PDF Download
+                         <Download size={20} /> {t.pdfDownload}
                       </button>
                    </div>
 
-                   <button onClick={() => setShowInvoice(null)} className="w-full text-center py-4 text-slate-400 font-bold hover:text-slate-600 transition-all mt-4 uppercase tracking-[0.2em] text-[10px]">
-                     Continue to Next Sale
+                   <button onClick={() => setShowInvoice(null)} className="w-full text-center py-4 text-pink-600 font-black hover:opacity-80 transition-all mt-4 uppercase tracking-[0.2em] text-[10px] bg-pink-50 rounded-xl">
+                      {t.continueSale}
                    </button>
                 </div>
              </motion.div>

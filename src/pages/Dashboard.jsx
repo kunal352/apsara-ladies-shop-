@@ -36,8 +36,8 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         <StatCard title={t.totalRevenue} value={`₹${totalRevenue}`} icon={<IndianRupee className="text-pink-600" size={28} />} color="bg-pink-50" />
-        <StatCard title={t.stockGela} value={`${totalSold} pcs`} icon={<TrendingUp className="text-purple-600" size={28} />} color="bg-purple-50" />
-        <StatCard title={t.stockShilak} value={`${remainingStock} pcs`} icon={<Package className="text-blue-600" size={28} />} color="bg-blue-50" />
+        <StatCard title={t.stockGela} value={`${totalSold} ${t.gela}`} icon={<TrendingUp className="text-purple-600" size={28} />} color="bg-purple-50" />
+        <StatCard title={t.stockShilak} value={`${remainingStock} ${t.shilak}`} icon={<Package className="text-blue-600" size={28} />} color="bg-blue-50" />
         <StatCard title={t.varieties} value={totalProducts} icon={<ShoppingBag className="text-orange-600" size={28} />} color="bg-orange-50" />
       </div>
 
@@ -47,8 +47,8 @@ const Dashboard = () => {
              <AlertTriangle className="text-white" size={32} />
            </div>
            <div>
-             <h3 className="text-2xl font-black text-slate-900 mb-1 leading-none mt-2">Inventory Alert!</h3>
-             <p className="text-slate-500 font-bold">{lowStockItems.length} products are running low on stock. Please restock soon.</p>
+             <h3 className="text-2xl font-black text-slate-900 mb-1 leading-none mt-2">{t.inventoryAlert}</h3>
+             <p className="text-slate-500 font-bold">{lowStockItems.length} {t.lowStockDesc}</p>
            </div>
         </div>
       )}
@@ -56,43 +56,43 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm min-h-[400px]">
            <h3 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
-             <TrendingUp size={20} className="text-pink-600" /> Recent Sales Activity
+             <TrendingUp size={20} className="text-pink-600" /> {t.recentSales}
            </h3>
            <div className="space-y-4">
              {orders.slice(0, 5).map(order => (
                <div key={order.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
                  <div>
-                   <p className="font-bold text-slate-900">{order.customerName}</p>
-                   <p className="text-xs text-slate-400 font-bold">{order.items.length} items</p>
+                   <p className="font-bold text-slate-900 text-sm">{order.customerName}</p>
+                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{new Date(order.date).toLocaleDateString()}</p>
                  </div>
                  <div className="text-right">
-                   <p className="font-black text-pink-600">₹{order.total}</p>
-                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{order.id}</p>
+                   <p className="font-black text-pink-600 text-lg leading-none mb-1">₹{order.total}</p>
+                   <p className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">{order.id.slice(-6)}</p>
                  </div>
                </div>
              ))}
-             {orders.length === 0 && <p className="text-slate-400 font-bold text-center py-20 italic">No sales activity yet.</p>}
+             {orders.length === 0 && <p className="text-slate-400 font-bold text-center py-20 italic text-sm">{t.noSales}</p>}
            </div>
         </div>
 
         <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm min-h-[400px]">
            <h3 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
-             <AlertTriangle size={20} className="text-orange-600" /> Critical Stock Items
+             <AlertTriangle size={20} className="text-orange-600" /> {t.criticalStock}
            </h3>
            <div className="space-y-4">
              {lowStockItems.map(p => (
                <div key={p.id} className="flex items-center justify-between p-4 bg-red-50/50 rounded-2xl border border-red-100/50">
                  <div>
-                   <p className="font-bold text-slate-900">{p.name}</p>
-                   <p className="text-xs text-slate-400 font-bold uppercase">{p.category}</p>
+                   <p className="font-bold text-slate-900 text-sm leading-tight mb-1">{p.name}</p>
+                   <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">{p.category}</p>
                  </div>
                  <div className="text-right">
-                   <p className="font-black text-red-600">{p.stock} Units Left</p>
-                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Low Stock</p>
+                   <p className="font-black text-red-600 leading-none mb-1">{p.stock} {t.unitsLeft}</p>
+                   <p className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">{t.inventoryAlert}</p>
                  </div>
                </div>
              ))}
-             {lowStockItems.length === 0 && <p className="text-slate-400 font-bold text-center py-20 italic">Stock levels are healthy! ✓</p>}
+             {lowStockItems.length === 0 && <p className="text-slate-400 font-bold text-center py-20 italic text-sm">{t.healthyStock}</p>}
            </div>
         </div>
       </div>
