@@ -16,7 +16,7 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 const Dashboard = () => {
-  const { products, orders, t } = useShop();
+  const { products, orders, t, activeTheme } = useShop();
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const totalSold = products.reduce((sum, p) => sum + p.sold, 0);
@@ -30,12 +30,12 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm gap-6">
         <div>
           <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">{t.dashboard}</h1>
-          <p className="text-pink-600 font-bold uppercase tracking-widest text-[10px]">Apsara General Store - {new Date().toLocaleDateString()}</p>
+          <p className={`font-bold uppercase tracking-widest text-[10px] text-${activeTheme.primary}`}>Apsara General Store - {new Date().toLocaleDateString()}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-        <StatCard title={t.totalRevenue} value={`₹${totalRevenue}`} icon={<IndianRupee className="text-pink-600" size={28} />} color="bg-pink-50" />
+        <StatCard title={t.totalRevenue} value={`₹${totalRevenue}`} icon={<IndianRupee className={`text-${activeTheme.primary}`} size={28} />} color={`bg-${activeTheme.secondary}`} />
         <StatCard title={t.stockGela} value={`${totalSold} ${t.gela}`} icon={<TrendingUp className="text-purple-600" size={28} />} color="bg-purple-50" />
         <StatCard title={t.stockShilak} value={`${remainingStock} ${t.shilak}`} icon={<Package className="text-blue-600" size={28} />} color="bg-blue-50" />
         <StatCard title={t.varieties} value={totalProducts} icon={<ShoppingBag className="text-orange-600" size={28} />} color="bg-orange-50" />

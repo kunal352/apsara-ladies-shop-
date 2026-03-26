@@ -7,7 +7,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
 const Billing = () => {
-  const { products, completeBill, shopDetails, t, lang, setLang } = useShop();
+  const { products, completeBill, shopDetails, t, lang, setLang, activeTheme } = useShop();
   const [customer, setCustomer] = useState({ name: '', mobile: '' });
   const [selectedItems, setSelectedItems] = useState([]);
   const [showInvoice, setShowInvoice] = useState(null);
@@ -56,13 +56,15 @@ const Billing = () => {
     setSelectedItems([]);
     setCustomer({ name: '', mobile: '' });
     setIsManual(false);
-    toast.success('Sale Completed!');
+    toast.success(t.success);
   };
 
   const generatePDF = (bill) => {
     const doc = new jsPDF();
     doc.setFontSize(22);
-    doc.setTextColor(190, 24, 93);
+    // Setting manual color based on theme
+    const rgb = activeTheme.primary.includes('pink') ? [190, 24, 93] : activeTheme.primary.includes('blue') ? [37, 99, 235] : activeTheme.primary.includes('purple') ? [147, 51, 234] : [5, 150, 105];
+    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
     doc.text(shopDetails.name, 105, 20, { align: 'center' });
     doc.setFontSize(10);
     doc.setTextColor(100);
@@ -82,7 +84,7 @@ const Billing = () => {
       head: [['Product Name', 'Rate', 'Qty', 'Amount']],
       body: tableData,
       theme: 'grid',
-      headStyles: { fillColor: [190, 24, 93] },
+      headStyles: { fillColor: rgb },
     });
 
     const finalY = doc.lastAutoTable.finalY + 15;
@@ -91,15 +93,16 @@ const Billing = () => {
 
     doc.setFontSize(10);
     doc.text(`${t.thankYou} - ${shopDetails.name}`, 105, finalY + 25, { align: 'center' });
-    doc.save(`Apsara_Bill_${bill.id.slice(-6)}.pdf`);
+    doc.save(`Shop_Bill_${bill.id.slice(-6)}.pdf`);
   };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12 max-w-[1400px]">
+      {/* Header */}
       <div className="flex justify-between items-center bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm no-print">
         <div>
           <h1 className="text-4xl font-black text-slate-900 leading-none mb-2">{t.billing}</h1>
-          <p className="text-pink-600 font-bold uppercase tracking-widest text-[10px]">{shopDetails.name} - {new Date().toLocaleDateString()}</p>
+          <p className={`font-bold uppercase tracking-widest text-[10px] text-${activeTheme.primary}`}>{shopDetails.name} - {new Date().toLocaleDateString()}</p>
         </div>
       </div>
 
@@ -109,25 +112,26 @@ const Billing = () => {
            <div className="bg-white p-10 rounded-[40px] border border-slate-100 shadow-sm min-h-[600px]">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                 <h2 className="text-2xl font-black text-slate-950 flex items-center gap-3 leading-none">
-                   <Sparkles className="text-pink-600" /> {t.collection}
+                   <Sparkles className={`text-${activeTheme.primary}`} /> {t.collection}
                 </h2>
                 <div className="relative w-full md:w-80">
                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                    <input 
-                    className="w-full pl-16 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-slate-900 focus:ring-4 focus:ring-pink-100 text-lg shadow-inner" 
+                    className={`w-full pl-16 py-5 rounded-2xl bg-slate-50 border-none outline-none font-bold text-slate-900 focus:ring-4 focus:ring-${activeTheme.secondary} text-lg shadow-inner`}
                     placeholder={t.search} 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                    />
                 </div>
               </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                  {filteredProducts.map(p => (
                    <button 
                      key={p.id} 
                      onClick={() => addItem(p)}
                      disabled={p.stock <= 0}
-                     className={`p-4 rounded-[24px] border text-left transition-all ${p.stock <= 0 ? 'bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed' : 'bg-white border-slate-100 hover:border-pink-300 hover:bg-pink-50/20 shadow-sm hover:shadow-xl'}`}
+                     className={`p-4 rounded-[24px] border text-left transition-all ${p.stock <= 0 ? 'bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed' : `bg-white border-slate-100 hover:border-${activeTheme.primary} hover:bg-${activeTheme.secondary}/20 shadow-sm hover:shadow-xl`}`}
                    >
                      <div className="flex items-center gap-3 mb-3">
                        <span className="text-2xl">🛍️</span>
@@ -146,10 +150,11 @@ const Billing = () => {
            </div>
         </div>
 
+        {/* Right: Cart/Sidebar */}
         <div className="space-y-6 relative">
-           <div className="bg-white p-6 rounded-[32px] border-t-8 border-pink-600 shadow-xl shadow-pink-900/5 sticky top-8">
-              <h2 className="text-xl font-black text-slate-950 mb-6 flex items-center gap-2 underline decoration-pink-600/20 decoration-8 underline-offset-4 mt-2">
-                 <Receipt className="text-pink-600" size={20} /> {t.billing}
+           <div className={`bg-white p-6 rounded-[32px] border-t-8 border-${activeTheme.primary} shadow-xl shadow-slate-900/5 sticky top-8`}>
+              <h2 className={`text-xl font-black text-slate-950 mb-6 flex items-center gap-2 underline decoration-${activeTheme.primary}/20 decoration-8 underline-offset-4 mt-2`}>
+                 <Receipt className={`text-${activeTheme.primary}`} size={20} /> {t.billing}
               </h2>
 
               <div className="space-y-6">
@@ -157,7 +162,7 @@ const Billing = () => {
                     <div className="relative">
                        <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                        <input 
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-pink-100 transition-all uppercase" 
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-${activeTheme.secondary} transition-all uppercase`}
                         placeholder={t.customerName} 
                         value={customer.name} 
                         onChange={e => {
@@ -171,7 +176,7 @@ const Billing = () => {
                        <input 
                         type="tel"
                         maxLength="10"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-pink-100 transition-all font-mono tracking-wider" 
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-${activeTheme.secondary} transition-all font-mono tracking-wider`}
                         placeholder={t.mobile} 
                         value={customer.mobile} 
                         onChange={e => {
@@ -189,7 +194,7 @@ const Billing = () => {
                       <div key={item.id} className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl group transition-all hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100">
                          <div className="flex-1">
                             <p className="font-black text-slate-900 text-[11px] leading-tight mb-1 uppercase">{item.name}</p>
-                            <p className="font-bold text-pink-600 text-[10px]">₹{item.price} x {item.qty}</p>
+                            <p className={`font-bold text-${activeTheme.primary} text-[10px]`}>₹{item.price} x {item.qty}</p>
                          </div>
                          <div className="flex items-center gap-2">
                             <button onClick={() => removeItem(item.id)} className="p-1.5 bg-white text-slate-300 hover:text-red-500 rounded-lg transition-all shadow-sm"><Trash2 size={14} /></button>
@@ -205,30 +210,30 @@ const Billing = () => {
                           <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-1">Total Payable</span>
                           <button 
                             onClick={() => { setIsManual(!isManual); if(!isManual) setManualAmount(totalAmount); }}
-                            className="text-[9px] font-black text-pink-500 uppercase tracking-tighter hover:underline"
+                            className={`text-[9px] font-black text-${activeTheme.primary} uppercase tracking-tighter hover:underline`}
                           >
                             {isManual ? 'Auto Total' : 'Edit Manual'}
                           </button>
                        </div>
                        {isManual ? (
-                         <div className="flex items-center gap-2 border-b-2 border-pink-600 pb-1">
-                            <span className="text-lg font-black text-pink-600">₹</span>
+                         <div className={`flex items-center gap-2 border-b-2 border-${activeTheme.primary} pb-1`}>
+                            <span className={`text-lg font-black text-${activeTheme.primary}`}>₹</span>
                             <input 
                               type="number" 
                               autoFocus
-                              className="bg-transparent text-3xl font-black text-pink-600 outline-none w-20" 
+                              className={`bg-transparent text-3xl font-black text-${activeTheme.primary} outline-none w-20`}
                               value={manualAmount} 
                               onChange={(e) => setManualAmount(e.target.value)} 
                             />
                          </div>
                        ) : (
-                         <span className="text-4xl font-black text-pink-600 leading-none">₹{totalAmount}</span>
+                         <span className={`text-4xl font-black text-${activeTheme.primary} leading-none`}>₹{totalAmount}</span>
                        )}
                     </div>
                     <button 
                       onClick={handleCheckout}
                       disabled={selectedItems.length === 0}
-                      className="w-full bg-pink-600 text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-40"
+                      className={`w-full bg-${activeTheme.primary} text-white py-4 rounded-xl font-black text-lg hover:opacity-90 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-40 shadow-xl shadow-${activeTheme.primary}/20`}
                     >
                       <CreditCard size={20} /> {t.completeSale}
                     </button>
@@ -241,7 +246,7 @@ const Billing = () => {
       <AnimatePresence>
         {showInvoice && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950/70 backdrop-blur-xl z-[200] flex items-center justify-center p-8 active">
-             {/* Hidden Print Content (Shown only on paper via CSS) */}
+             {/* Hidden Print Content */}
              <div id="printable-invoice" className="hidden print:block text-slate-900 w-[80mm] max-w-full mx-auto p-4">
                 <div className="text-center mb-6 border-b-2 pb-4">
                    <h1 className="text-xl font-black uppercase tracking-widest text-pink-600 leading-none">{shopDetails.name}</h1>
@@ -292,7 +297,7 @@ const Billing = () => {
 
              {/* On-Screen Success Modal */}
              <motion.div initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl relative no-print">
-                <div className="bg-pink-600 p-12 text-center text-white relative">
+                <div className={`bg-${activeTheme.primary} p-12 text-center text-white relative`}>
                    <button onClick={() => setShowInvoice(null)} className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors"><X/></button>
                    <div className="bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-xl border border-white/40 shadow-xl">
                      <CheckCircle size={40} />
@@ -304,19 +309,19 @@ const Billing = () => {
                 <div className="p-12 space-y-8">
                    <div className="flex justify-between pb-8 border-b border-slate-50 text-center">
                       <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t.customerName}</p><p className="font-bold text-slate-950 uppercase">{showInvoice.customerName}</p></div>
-                      <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p><p className="text-2xl font-black text-pink-600 leading-none underline decoration-4 decoration-pink-600/10">₹{showInvoice.total}</p></div>
+                      <div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p><p className={`text-2xl font-black text-${activeTheme.primary} leading-none underline decoration-4 decoration-pink-600/10`}>₹{showInvoice.total}</p></div>
                    </div>
 
                    <div className="grid grid-cols-2 gap-4">
                       <button onClick={() => window.print()} className="flex items-center justify-center gap-2 bg-slate-900 text-white py-5 rounded-2xl font-black hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-slate-200">
                          <Printer size={20} /> {t.printBill}
                       </button>
-                      <button onClick={() => generatePDF(showInvoice)} className="flex items-center justify-center gap-2 bg-pink-600 text-white py-5 rounded-2xl font-black hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-pink-200">
+                      <button onClick={() => generatePDF(showInvoice)} className={`flex items-center justify-center gap-2 bg-${activeTheme.primary} text-white py-5 rounded-2xl font-black hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-slate-200`}>
                          <Download size={20} /> {t.pdfDownload}
                       </button>
                    </div>
 
-                   <button onClick={() => setShowInvoice(null)} className="w-full text-center py-4 text-pink-600 font-black hover:opacity-80 transition-all mt-4 uppercase tracking-[0.2em] text-[10px] bg-pink-50 rounded-xl">
+                   <button onClick={() => setShowInvoice(null)} className={`w-full text-center py-4 text-${activeTheme.primary} font-black hover:opacity-80 transition-all mt-4 uppercase tracking-[0.2em] text-[10px] bg-slate-50 rounded-xl`}>
                       {t.continueSale}
                    </button>
                 </div>
