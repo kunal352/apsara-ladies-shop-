@@ -156,7 +156,15 @@ const Billing = () => {
                  <div className="space-y-3">
                     <div className="relative">
                        <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                       <input className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm" placeholder={t.customerName} value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
+                       <input 
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-pink-100 transition-all uppercase" 
+                        placeholder={t.customerName} 
+                        value={customer.name} 
+                        onChange={e => {
+                          const val = e.target.value.replace(/[^A-Za-z ]/g, '');
+                          setCustomer({...customer, name: val});
+                        }} 
+                       />
                     </div>
                     <div className="relative">
                        <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
