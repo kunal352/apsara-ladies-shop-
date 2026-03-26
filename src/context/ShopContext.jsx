@@ -12,8 +12,8 @@ export const ShopProvider = ({ children }) => {
   const [shopDetails, setShopDetails] = useState(() => {
     const saved = localStorage.getItem('apsara_details');
     return saved ? JSON.parse(saved) : {
-      name: 'Apsara Ladies Shop',
-      tagline: 'Premium Boutique & Designer Wear',
+      name: 'Apsara General Store',
+      tagline: 'Premium Boutique & General Collection',
       theme: 'pink'
     };
   });

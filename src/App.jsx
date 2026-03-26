@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { LayoutDashboard, ShoppingBag, Receipt, TrendingUp, Sparkles, Menu, X } from 'lucide-react';
-import { ShopProvider } from './context/ShopContext';
+import { ShopProvider, useShop } from './context/ShopContext';
 
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
