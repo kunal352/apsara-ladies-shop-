@@ -104,6 +104,7 @@ export const ShopProvider = ({ children }) => {
   };
 
   const t = translations[lang];
+  const activeTheme = themes[theme];
 
   const completeBill = (billData) => {
     const newBill = {
