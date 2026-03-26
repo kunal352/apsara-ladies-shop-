@@ -6,8 +6,8 @@ import toast from 'react-hot-toast';
 
 const Inventory = () => {
   const { products, addProduct, removeProduct, updateProduct, t } = useShop();
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '', category: 'Kurti', price: '', stock: '' });
 
   const categories = ['Kurti', 'Saree', 'Dress', 'Accessories'];
