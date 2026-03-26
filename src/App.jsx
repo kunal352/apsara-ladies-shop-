@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { LayoutDashboard, ShoppingBag, Receipt, TrendingUp, Sparkles } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Receipt, TrendingUp, Sparkles, Menu, X } from 'lucide-react';
 import { ShopProvider } from './context/ShopContext';
 
 import Dashboard from './pages/Dashboard';
@@ -10,49 +10,67 @@ import Billing from './pages/Billing';
 import Reports from './pages/Reports';
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
   const links = [
     { title: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
     { title: 'New Bill', path: '/billing', icon: <Receipt size={20} /> },
-    { title: 'Product Inventory', path: '/inventory', icon: <ShoppingBag size={20} /> },
+    { title: 'Inventory', path: '/inventory', icon: <ShoppingBag size={20} /> },
     { title: 'Sales Reports', path: '/reports', icon: <TrendingUp size={20} /> },
   ];
 
   return (
-    <nav className="fixed left-0 top-0 h-screen w-72 bg-white border-r border-slate-100 p-8 flex flex-col z-50">
-      <div className="flex items-center gap-3 mb-12">
-        <div className="bg-pink-600 p-3 rounded-2xl shadow-xl shadow-pink-100">
-          <Sparkles className="text-white" size={24} />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 leading-none tracking-tight">Apsara</h1>
-          <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">Ladies Shop</span>
-        </div>
-      </div>
+    <>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed top-6 right-6 z-[60] p-4 bg-pink-600 text-white rounded-2xl shadow-xl lg:hidden active:scale-90 transition-all"
+      >
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
-      <div className="flex-1 space-y-2">
-        {links.map(link => (
-          <Link 
-            key={link.path}
-            to={link.path}
-            className={`flex items-center gap-3 px-6 py-4 rounded-xl font-bold transition-all ${
-              isActive(link.path) 
-                ? 'bg-pink-600 text-white shadow-lg shadow-pink-200' 
-                : 'text-slate-500 hover:bg-pink-50 hover:text-pink-600'
-            }`}
-          >
-            {link.icon}
-            {link.title}
-          </Link>
-        ))}
-      </div>
+      <nav className={`fixed left-0 top-0 h-screen w-72 bg-white border-r border-slate-100 p-8 flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center gap-3 mb-12">
+          <div className="bg-pink-600 p-3 rounded-2xl shadow-xl shadow-pink-100">
+            <Sparkles className="text-white" size={24} />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900 leading-none tracking-tight">Apsara</h1>
+            <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">Ladies Shop</span>
+          </div>
+        </div>
 
-      <div className="mt-auto pt-8 border-t border-slate-50 opacity-60">
-         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Version 1.0.0 Business</p>
-      </div>
-    </nav>
+        <div className="flex-1 space-y-2">
+          {links.map(link => (
+            <Link 
+              key={link.path}
+              to={link.path}
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center gap-3 px-6 py-4 rounded-xl font-bold transition-all ${
+                isActive(link.path) 
+                  ? 'bg-pink-600 text-white shadow-lg shadow-pink-200' 
+                  : 'text-slate-500 hover:bg-pink-50 hover:text-pink-600'
+              }`}
+            >
+              {link.icon}
+              {link.title}
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-auto pt-8 border-t border-slate-50 opacity-60">
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Version 1.0.0 Business</p>
+        </div>
+      </nav>
+
+      {isOpen && (
+        <div 
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-40 lg:hidden"
+        />
+      )}
+    </>
   );
 };
 
@@ -60,9 +78,9 @@ function App() {
   return (
     <ShopProvider>
       <Router>
-        <div className="min-h-screen flex bg-slate-50 font-inter">
+        <div className="min-h-screen flex bg-slate-50 font-inter overflow-x-hidden">
           <Navbar />
-          <main className="flex-1 ml-72 p-12 overflow-y-auto">
+          <main className="flex-1 lg:ml-72 p-6 md:p-12 transition-all">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/inventory" element={<Inventory />} />

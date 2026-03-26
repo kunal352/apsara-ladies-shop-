@@ -33,7 +33,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         <StatCard title="Total Revenue" value={`₹${totalRevenue}`} icon={<IndianRupee className="text-pink-600" size={28} />} color="bg-pink-50" />
         <StatCard title="Stock Gela (Sold)" value={`${totalSold} pcs`} icon={<TrendingUp className="text-purple-600" size={28} />} color="bg-purple-50" />
         <StatCard title="Stock Shilak (Left)" value={`${remainingStock} pcs`} icon={<Package className="text-blue-600" size={28} />} color="bg-blue-50" />

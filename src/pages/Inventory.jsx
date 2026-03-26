@@ -46,8 +46,8 @@ const Inventory = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden">
-        <table className="w-full text-left">
+      <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-x-auto custom-scrollbar shadow-xl shadow-slate-200/50">
+        <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-slate-50/50 border-b border-slate-100 font-black text-slate-400 text-[10px] uppercase tracking-[0.2em] text-center">
             <tr>
               <th className="px-12 py-10 text-left">Collection Name</th>
