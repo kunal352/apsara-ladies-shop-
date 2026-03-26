@@ -42,7 +42,8 @@ const Billing = () => {
   const totalAmount = isManual ? manualAmount : selectedItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
   const handleCheckout = async () => {
-    if (!customer.name || !customer.mobile || selectedItems.length === 0) {
+    if (!customer.name || customer.mobile.length !== 10 || selectedItems.length === 0) {
+      if (customer.mobile.length !== 10) return toast.error('Enter valid 10-digit mobile!');
       return toast.error('Please check customer details and items!');
     }
     const bill = completeBill({ 
@@ -159,7 +160,17 @@ const Billing = () => {
                     </div>
                     <div className="relative">
                        <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                       <input className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm" placeholder={t.mobile} value={customer.mobile} onChange={e => setCustomer({...customer, mobile: e.target.value})} />
+                       <input 
+                        type="tel"
+                        maxLength="10"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border-none outline-none font-bold text-slate-900 text-sm focus:ring-2 focus:ring-pink-100 transition-all" 
+                        placeholder={t.mobile} 
+                        value={customer.mobile} 
+                        onChange={e => {
+                          const val = e.target.value.replace(/\D/g, '');
+                          if (val.length <= 10) setCustomer({...customer, mobile: val});
+                        }} 
+                       />
                     </div>
                  </div>
 
