@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 const ShopContext = createContext();
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const useShop = () => {
   const context = useContext(ShopContext);
@@ -18,35 +20,148 @@ export const ShopProvider = ({ children }) => {
     };
   });
 
-  const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem('apsara_products');
-    return saved ? JSON.parse(saved) : [
-      { id: 1, name: 'Cotton Silk Saree', price: 1250, category: 'Saree', stock: 15, sold: 0 },
-      { id: 2, name: 'Designer Anarkali', price: 850, category: 'Dress', stock: 10, sold: 0 },
-      { id: 3, name: 'Embroidered Kurti', price: 450, category: 'Kurti', stock: 20, sold: 0 }
-    ];
-  });
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-  const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem('apsara_orders');
-    return saved ? JSON.parse(saved) : [];
-  });
-
+  // Sync state with online/offline status
   useEffect(() => {
-    localStorage.setItem('apsara_details', JSON.stringify(shopDetails));
-  }, [shopDetails]);
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
+  // Initial Data Load (Hybrid: Try API then Fallback to Local)
   useEffect(() => {
-    localStorage.setItem('apsara_products', JSON.stringify(products));
-  }, [products]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [prodRes, billRes] = await Promise.all([
+          fetch(`${API_URL}/products`).catch(() => null),
+          fetch(`${API_URL}/bills`).catch(() => null)
+        ]);
+        
+        if (prodRes && prodRes.ok && billRes && billRes.ok) {
+          const prodData = await prodRes.json();
+          const billData = await billRes.json();
+          const mappedProds = prodData.map(p => ({ ...p, id: p._id }));
+          const mappedOrders = billData.map(b => ({ ...b, id: b._id, total: b.totalAmount }));
+          
+          setProducts(mappedProds);
+          setOrders(mappedOrders);
+          
+          // Backup to LocalStorage for offline use
+          localStorage.setItem('apsara_products_backup', JSON.stringify(mappedProds));
+          localStorage.setItem('apsara_orders_backup', JSON.stringify(mappedOrders));
+        } else {
+          throw new Error('Server unreachable');
+        }
+      } catch (err) {
+        console.warn('Backend connection failed, using local storage.');
+        const localProds = JSON.parse(localStorage.getItem('apsara_products_backup') || '[]');
+        const localOrders = JSON.parse(localStorage.getItem('apsara_orders_backup') || '[]');
+        setProducts(localProds);
+        setOrders(localOrders);
+        if (!isOffline) toast('Using local mode (Offline)', { icon: '📴' });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [isOffline]);
 
-  useEffect(() => {
-    localStorage.setItem('apsara_orders', JSON.stringify(orders));
-  }, [orders]);
+  const addProduct = async (product) => {
+    const localId = Date.now();
+    const optimisticProduct = { ...product, id: localId, sold: 0 };
+    setProducts(prev => [optimisticProduct, ...prev]);
 
-  const addProduct = (product) => setProducts(prev => [...prev, { ...product, id: Date.now(), sold: 0 }]);
-  const removeProduct = (id) => setProducts(prev => prev.filter(p => p.id !== id));
-  const updateProduct = (id, updated) => setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+    try {
+      const res = await fetch(`${API_URL}/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setProducts(prev => prev.map(p => p.id === localId ? { ...saved, id: saved._id } : p));
+        toast.success('Synced to Cloud!');
+      }
+    } catch (err) {
+      toast('Saved locally (Offline)', { icon: '📂' });
+    } finally {
+      localStorage.setItem('apsara_products_backup', JSON.stringify(products));
+    }
+  };
+
+  const removeProduct = async (id) => {
+    setProducts(prev => prev.filter(p => p.id !== id));
+    try {
+      await fetch(`${API_URL}/products/${id}`, { method: 'DELETE' });
+    } catch (err) {
+      toast('Removed locally', { icon: '🗑️' });
+    }
+  };
+
+  const updateProduct = async (id, updated) => {
+    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+    try {
+      await fetch(`${API_URL}/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+    } catch (err) {
+      console.warn('Update only applied locally');
+    }
+  };
+
+  const completeBill = async (billData) => {
+    const localBillId = `BILL-${Date.now()}`;
+    const optimisticBill = { 
+       ...billData, 
+       id: localBillId, 
+       total: billData.total,
+       date: new Date().toISOString()
+    };
+
+    setOrders(prev => [optimisticBill, ...prev]);
+    setProducts(prev => prev.map(p => {
+      const billItem = billData.items.find(item => item.id === p.id);
+      if (billItem) {
+        return { ...p, stock: p.stock - billItem.qty, sold: p.sold + billItem.qty };
+      }
+      return p;
+    }));
+
+    try {
+      const res = await fetch(`${API_URL}/billing`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: billData.customerName,
+          customerMobile: billData.customerMobile,
+          items: billData.items.map(i => ({ productId: i.id, name: i.name, price: i.price, qty: i.qty })),
+          totalAmount: billData.total
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const savedBill = { ...data.bill, id: data.bill._id, total: data.bill.totalAmount };
+        setOrders(prev => prev.map(o => o.id === localBillId ? savedBill : o));
+        toast.success('Bill synced to Cloud!');
+        return savedBill;
+      }
+    } catch (err) {
+      toast('Bill saved locally (Offline)', { icon: '📄' });
+    }
+    return optimisticBill;
+  };
   
   const [lang, setLang] = useState(() => localStorage.getItem('apsara_lang') || 'mr');
   const [theme, setTheme] = useState(() => localStorage.getItem('apsara_theme') || 'pink');
@@ -93,48 +208,16 @@ export const ShopProvider = ({ children }) => {
       noSales: "अद्याप कोणतीही विक्री नाही.", healthyStock: "स्टॉकची स्थिती चांगली आहे! ✓",
       printBill: "बिल प्रिंट करा", pdfDownload: "PDF डाऊनलोड", saleComplete: "विक्री यशस्वी!", invoiceGenerated: "पावती तयार झाली आहे",
       continueSale: "पुढील बिल सुरू करा", thankYou: "धन्यवाद! पुन्हा भेट द्या.",
-      success: "विक्री यशस्वी!", error: "माहिती तपासा!", shilak: "नग शिल्लक", gela: "नग विक्री"
-    },
-    hi: {
-      dashboard: "डैशबोर्ड", billing: "नया बिल", inventory: "इन्वेंट्री",
-      searchProducts: 'सामान खोजें...',
-      addProduct: 'नया सामान जोड़ें',
-      totalRevenue: "कुल कमाई", stockGela: "बिका हुआ स्टॉक (गया)", stockShilak: "बचा हुआ स्टॉक", varieties: "कुल प्रकार",
-      collection: "कलेक्शन", search: "सामान खोजें...", customerName: "ग्राहक का नाम", mobile: "मोबाइल नंबर", completeSale: "बिक्री पूरी करें",
-      remainingStock: "बचा हुआ", addProduct: "नया सामान जोड़ें", price: "कीमत", category: "श्रेणी",
-      inventoryAlert: "स्टॉक चेतावनी!", lowStockDesc: "सामान का स्टॉक कम हो रहा है। कृपया नया स्टॉक जोड़ें।",
-      recentSales: "हाल की बिक्री जानकारी", criticalStock: "कम हुआ स्टॉक", unitsLeft: "नग बचे हैं",
-      noSales: "अभी तक कोई बिक्री नहीं हुई।", healthyStock: "स्टॉक की स्थिति अच्छी है! ✓",
-      printBill: "बिल प्रिंट करें", pdfDownload: "PDF डाउनलोड", saleComplete: "बिक्री सफल!", invoiceGenerated: "बिल सफलतापूर्वक तैयार हुआ",
-      continueSale: "अगला बिल शुरू करें", thankYou: "धन्यवाद! फिर आएं।",
-      success: "बिक्री सफल!", error: "विवरण जांचें!", shilak: "नग शेष", gela: "नग बिका"
+      success: "विक्री यशस्वी!", error: "माहिती तपासा!", shilak: "नग शिल्लक", gela: "नग विक्री", stockValue: "एकूण स्टॉक किंमत"
     }
   };
 
-  const t = translations[lang];
+  const t = translations[lang] || translations['mr'];
   const activeTheme = themes[theme];
-
-  const completeBill = (billData) => {
-    const newBill = {
-      ...billData,
-      id: `INV-${Date.now()}`,
-      date: new Date().toISOString()
-    };
-
-    setOrders(prev => [newBill, ...prev]);
-    setProducts(prev => prev.map(p => {
-      const billItem = billData.items.find(item => item.id === p.id);
-      if (billItem) {
-        return { ...p, stock: p.stock - billItem.qty, sold: p.sold + billItem.qty };
-      }
-      return p;
-    }));
-    return newBill;
-  };
 
   return (
     <ShopContext.Provider value={{ 
-      products, orders, shopDetails,
+      products, orders, shopDetails, loading, isOffline,
       addProduct, removeProduct, updateProduct, completeBill,
       lang, setLang, t, 
       theme, setTheme, themes, activeTheme

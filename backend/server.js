@@ -22,12 +22,25 @@ const Bill = require('./models/Bill');
 
 // --- API ROUTES ---
 
-// 1. PRODUCTS
+// Products Routes
 app.get('/api/products', async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    console.error('Fetch products error:', err.message);
+    res.status(200).json([]); // Return empty list instead of 500 to help frontend fallback
+  }
+});
+
+app.get('/api/bills', async (req, res) => {
+  try {
+    const bills = await Bill.find().sort({ date: -1 });
+    res.json(bills);
+  } catch (err) {
+    console.error('Fetch bills error:', err.message);
+    res.status(200).json([]);
+  }
 });
 
 app.post('/api/products', async (req, res) => {

@@ -5,7 +5,7 @@ import { Plus, Edit2, Trash2, X, Save, ShoppingBag, Search } from 'lucide-react'
 import toast from 'react-hot-toast';
 
 const Inventory = () => {
-  const { products, addProduct, removeProduct, updateProduct, t, activeTheme } = useShop();
+  const { products, addProduct, removeProduct, updateProduct, t, activeTheme, loading } = useShop();
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '', category: 'Kurti', price: '', stock: '' });
@@ -19,17 +19,21 @@ const Inventory = () => {
     p.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (editingId) {
-      updateProduct(editingId, { ...formData, price: Number(formData.price), stock: Number(formData.stock) });
-      toast.success('Inventory updated!');
-    } else {
-      addProduct({ ...formData, price: Number(formData.price), stock: Number(formData.stock) });
-      toast.success('Collection added!');
+    try {
+      if (editingId) {
+        await updateProduct(editingId, { ...formData, price: Number(formData.price), stock: Number(formData.stock) });
+        toast.success('Inventory updated!');
+      } else {
+        await addProduct({ ...formData, price: Number(formData.price), stock: Number(formData.stock) });
+        toast.success('Collection added!');
+      }
+      setShowModal(false);
+      setEditingId(null);
+    } catch (err) {
+      // Error handled in context
     }
-    setShowModal(false);
-    setEditingId(null);
   };
 
   const startEdit = (p) => {
@@ -38,12 +42,24 @@ const Inventory = () => {
     setShowModal(true);
   };
 
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 border-4 border-slate-200 border-t-pink-600 rounded-full animate-spin"></div>
+        <p className="font-black text-slate-400 uppercase tracking-widest text-xs">Loading Inventory...</p>
+      </div>
+    );
+  }
+
+  const totalVal = filteredProducts.reduce((sum, p) => sum + (p.price * p.stock), 0);
+  const lowStockCount = products.filter(p => p.stock < 5).length;
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 md:space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 md:p-8 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm gap-6">
         <div className="w-full md:w-auto">
            <h1 className="text-3xl md:text-4xl font-black text-slate-900 leading-none mb-2">{t.inventory}</h1>
-           <p className="font-bold uppercase tracking-widest text-[10px] theme-text">Apsara General Store - Stock Control</p>
+           <p className="font-bold uppercase tracking-widest text-[10px] theme-text">Apsara General Store • Stock Management</p>
         </div>
         <button 
           onClick={() => { setEditingId(null); setFormData({ name: '', category: 'Kurti', price: '', stock: '' }); setShowModal(true); }}
@@ -51,6 +67,26 @@ const Inventory = () => {
         >
           <Plus size={20} /> {t.addProduct}
         </button>
+      </div>
+
+      {/* Stats Ribbon */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Items</p>
+            <p className="text-2xl font-black text-slate-900">{products.length}</p>
+         </div>
+         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Categories</p>
+            <p className="text-2xl font-black text-slate-900">{[...new Set(products.map(p => p.category))].length}</p>
+         </div>
+         <div className="bg-red-50 p-6 rounded-3xl border border-red-100 shadow-sm">
+            <p className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">Low Stock</p>
+            <p className="text-2xl font-black text-red-600">{lowStockCount}</p>
+         </div>
+         <div className="theme-bg-secondary p-6 rounded-3xl border theme-border shadow-sm">
+            <p className="text-[10px] font-black theme-text uppercase tracking-widest mb-1">Value</p>
+            <p className="text-2xl font-black theme-text">₹{totalVal}</p>
+         </div>
       </div>
 
       <div className="bg-white p-4 md:p-6 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4">
@@ -67,49 +103,101 @@ const Inventory = () => {
       </div>
 
 
-      <div className="bg-white rounded-[24px] md:rounded-[40px] border border-slate-100 shadow-sm overflow-x-auto custom-scrollbar shadow-xl shadow-slate-200/50">
-        <table className="w-full text-left min-w-[700px] md:min-w-[1000px]">
-          <thead className="bg-slate-50/50 border-b border-slate-100 font-black text-slate-400 text-[10px] uppercase tracking-[0.2em] text-center">
-            <tr>
-              <th className="px-6 md:px-12 py-8 md:py-10 text-left">Item Name</th>
-              <th className="px-6 md:px-12 py-8 md:py-10">{t.price}</th>
-              <th className="px-6 md:px-12 py-8 md:py-10">{t.stockShilak}</th>
-              <th className="px-6 md:px-12 py-8 md:py-10">{t.stockGela}</th>
-              <th className="px-6 md:px-12 py-8 md:py-10 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {filteredProducts.map(p => (
-              <tr key={p.id} className="transition-colors group theme-hover-secondary">
-                <td className="px-6 md:px-12 py-6 md:py-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center font-black text-lg md:text-xl shadow-inner shadow-slate-900/10 transition-transform group-hover:scale-110 theme-bg-secondary theme-text">🛍️</div>
-                    <div>
-                      <p className="font-black text-slate-900 text-base md:text-lg uppercase leading-none mb-1">{p.name}</p>
-                      <p className="text-[10px] font-black tracking-widest uppercase border-l-2 pl-2 ml-1 mt-2 theme-text theme-border">{p.category}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 md:px-12 py-6 md:py-8 text-center font-black text-xl md:text-2xl text-slate-900">₹{p.price}</td>
-                <td className="px-6 md:px-12 py-6 md:py-8 text-center">
-                   <div className={`px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl font-black text-[10px] md:text-sm inline-flex items-center gap-2 border-2 ${p.stock < 5 ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : 'bg-green-50 border-green-200 text-green-600'}`}>
-                     <span className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${p.stock < 5 ? 'bg-red-600' : 'bg-green-600'}`}></span>
-                     {p.stock} {t.shilak}
-                   </div>
-                </td>
-                <td className="px-6 md:px-12 py-6 md:py-8 text-center">
-                   <div className="bg-slate-900 text-slate-400 px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl font-black text-[10px] md:text-sm inline-flex items-center gap-2 border border-slate-800 shadow-xl shadow-slate-900/50">
-                     <span className="text-white">{p.sold}</span> {t.gela}
-                   </div>
-                </td>
-                <td className="px-6 md:px-12 py-6 md:py-8 text-right flex items-center justify-end gap-1">
-                   <button onClick={() => startEdit(p)} className="p-2 md:p-3 text-slate-400 transition-colors hover:theme-text"><Edit2 size={18} /></button>
-                   <button onClick={() => removeProduct(p.id)} className="p-2 md:p-3 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={18} /></button>
-                </td>
+      <div className="bg-white rounded-[24px] md:rounded-[40px] border border-slate-100 shadow-sm overflow-hidden shadow-xl shadow-slate-200/50">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left">
+            <thead className="bg-slate-50/50 border-b border-slate-100 font-black text-slate-400 text-[10px] uppercase tracking-[0.2em]">
+              <tr>
+                <th className="px-12 py-10 text-left">Item Name</th>
+                <th className="px-12 py-10 text-center">{t.price}</th>
+                <th className="px-12 py-10 text-center">{t.stockShilak}</th>
+                <th className="px-12 py-10 text-center">{t.stockGela}</th>
+                <th className="px-12 py-10 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredProducts.map(p => (
+                <tr key={p.id} className="transition-colors group theme-hover-secondary">
+                  <td className="px-12 py-8">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner shadow-slate-900/10 transition-transform group-hover:scale-110 theme-bg-secondary theme-text">🛍️</div>
+                      <div>
+                        <p className="font-black text-slate-900 text-lg uppercase leading-none mb-1">{p.name}</p>
+                        <p className="text-[10px] font-black tracking-widest uppercase border-l-2 pl-2 ml-1 mt-2 theme-text theme-border">{p.category}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-12 py-8 text-center font-black text-2xl text-slate-900">₹{p.price}</td>
+                  <td className="px-12 py-8 text-center">
+                    <div className={`px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border-2 ${p.stock < 5 ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : 'bg-green-50 border-green-200 text-green-600'}`}>
+                      <span className={`w-2 h-2 rounded-full ${p.stock < 5 ? 'bg-red-600' : 'bg-green-600'}`}></span>
+                      {p.stock} {t.shilak}
+                    </div>
+                  </td>
+                  <td className="px-12 py-8 text-center">
+                    <div className="bg-slate-900 text-slate-400 px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border border-slate-800 shadow-xl shadow-slate-900/50">
+                      <span className="text-white font-mono">{p.sold}</span> {t.gela}
+                    </div>
+                  </td>
+                  <td className="px-12 py-8 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button onClick={() => startEdit(p)} className="p-3 bg-slate-50 text-slate-400 rounded-xl transition-all hover:theme-bg hover:text-white shadow-sm"><Edit2 size={18} /></button>
+                      <button onClick={() => removeProduct(p.id)} className="p-3 bg-slate-50 text-slate-400 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-sm"><Trash2 size={18} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile View */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {filteredProducts.map(p => (
+            <div key={p.id} className="p-6 space-y-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner shadow-slate-900/10 theme-bg-secondary theme-text">🛍️</div>
+                  <div>
+                    <h3 className="font-black text-slate-900 uppercase leading-tight mb-1">{p.name}</h3>
+                    <p className="text-[9px] font-black tracking-widest uppercase theme-text">{p.category}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-black text-slate-900">₹{p.price}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className={`p-4 rounded-2xl border-2 flex flex-col items-center justify-center ${p.stock < 5 ? 'bg-red-50 border-red-100 text-red-600' : 'bg-green-50 border-green-100 text-green-600'}`}>
+                  <span className="text-[9px] font-black uppercase tracking-widest mb-1 opacity-60">Stock</span>
+                  <span className="text-lg font-black">{p.stock}</span>
+                </div>
+                <div className="p-4 rounded-2xl bg-slate-900 text-slate-400 border border-slate-800 flex flex-col items-center justify-center">
+                  <span className="text-[9px] font-black uppercase tracking-widest mb-1 opacity-60">Sold</span>
+                  <span className="text-lg font-black text-white">{p.sold}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button onClick={() => startEdit(p)} className="flex-1 py-4 bg-slate-50 text-slate-600 rounded-xl font-bold flex items-center justify-center gap-2 border border-slate-100 active:scale-95 transition-all">
+                  <Edit2 size={16} /> Edit
+                </button>
+                <button onClick={() => removeProduct(p.id)} className="w-14 h-14 bg-red-50 text-red-500 rounded-xl flex items-center justify-center border border-red-100 active:scale-95 transition-all">
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="py-20 text-center space-y-4">
+            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-3xl">🔍</div>
+            <p className="text-slate-400 font-bold">No products found matching your search.</p>
+          </div>
+        )}
       </div>
 
 
