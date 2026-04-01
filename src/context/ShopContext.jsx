@@ -211,10 +211,12 @@ export const ShopProvider = ({ children }) => {
 
   const translations = {
     en: {
-      dashboard: "Dashboard", billing: "New Bill", inventory: 'Inventory',
+      mainMenu: "Main Menu", personalize: "Personalize", language: "Language",
+      offlineMode: "Using local mode (Offline)", onlineMode: "Connected (Cloud)",
+      dashboard: "Dashboard", billing: "New Bill", inventory: 'Inventory', reports: 'Reports',
       searchProducts: 'Search Products...',
       addProduct: 'Add Product',
-      totalRevenue: "Total Revenue", stockGela: "Total Sold (Stock Gela)", stockShilak: "In Stock (Shilak)", varieties: "Total Varieties",
+      totalRevenue: "Total Revenue", stockGela: "Total Sold", stockShilak: "In Stock", varieties: "Total Varieties", stockValue: "Stock Value",
       collection: "Collection", search: "Search items...", customerName: "Customer Name", mobile: "Mobile Number", completeSale: "Complete Sale",
       remainingStock: "In Stock", addProduct: "Add New Item", price: "Price", category: "Category",
       inventoryAlert: "Inventory Alert!", lowStockDesc: "products are running low on stock. Please restock soon.",
@@ -225,10 +227,12 @@ export const ShopProvider = ({ children }) => {
       success: "Sale Completed!", error: "Check details!", shilak: "pcs In Stock", gela: "pcs Sold"
     },
     mr: {
-      dashboard: "डॅशबोर्ड", billing: "नवीन बिल", inventory: "इन्व्हेंटरी",
+      mainMenu: "मुख्य मेनू", personalize: "थीम बदला", language: "भाषा निवडा",
+      offlineMode: "ऑफलाइन मोड (पीसीवर सेव्ह होत आहे)", onlineMode: "ऑनलाइन (क्लाउड बॅकअप चालू)",
+      dashboard: "डॅशबोर्ड", billing: "नवीन बिल", inventory: "इन्व्हेंटरी", reports: "रिपोर्ट्स",
       searchProducts: 'वस्तू शोधा...',
       addProduct: 'नवीन वस्तू जोडा',
-      totalRevenue: "एकूण कमाई", stockGela: "विकलेला स्टॉक (गेला)", stockShilak: "शिल्लक स्टॉक", varieties: "एकूण प्रकार",
+      totalRevenue: "एकूण कमाई", stockGela: "विकलेला स्टॉक (गेला)", stockShilak: "शिल्लक स्टॉक", varieties: "एकूण प्रकार", stockValue: "एकूण स्टॉक किंमत",
       collection: "कलेक्शन", search: "वस्तू शोधा...", customerName: "ग्राहकाचे नाव", mobile: "मोबाईल नंबर", completeSale: "विक्री पूर्ण करा",
       remainingStock: "शिल्लक", addProduct: "नवीन वस्तू जोडा", price: "किंमत", category: "कॅटेगरी",
       inventoryAlert: "स्टॉक अलर्ट!", lowStockDesc: "वस्तूंचा स्टॉक कमी होत आहे. कृपया नवीन साठा भरा.",
@@ -236,7 +240,7 @@ export const ShopProvider = ({ children }) => {
       noSales: "अद्याप कोणतीही विक्री नाही.", healthyStock: "स्टॉकची स्थिती चांगली आहे! ✓",
       printBill: "बिल प्रिंट करा", pdfDownload: "PDF डाऊनलोड", saleComplete: "विक्री यशस्वी!", invoiceGenerated: "पावती तयार झाली आहे",
       continueSale: "पुढील बिल सुरू करा", thankYou: "धन्यवाद! पुन्हा भेट द्या.",
-      success: "विक्री यशस्वी!", error: "माहिती तपासा!", shilak: "नग शिल्लक", gela: "नग विक्री", stockValue: "एकूण स्टॉक किंमत"
+      success: "विक्री यशस्वी!", error: "माहिती तपासा!", shilak: "नग शिल्लक", gela: "नग विक्री"
     }
   };
 

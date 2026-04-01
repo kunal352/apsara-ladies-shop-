@@ -50,7 +50,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex-1 space-y-2 overflow-y-auto custom-scrollbar pr-2 mb-6">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-4">Main Menu</p>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-4">{t.mainMenu}</p>
           {links.map(link => (
             <Link 
               key={link.path}
@@ -71,7 +71,7 @@ const Navbar = () => {
         <div className="mt-auto space-y-8">
            <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
              <div className="mb-6">
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Personalize</p>
+               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{t.personalize}</p>
                <div className="flex justify-between items-center bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
                   {['pink', 'blue', 'purple', 'emerald'].map(c => (
                     <button 
@@ -83,8 +83,8 @@ const Navbar = () => {
                </div>
              </div>
 
-             <div>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Language</p>
+             <div className="mb-6">
+               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{t.language}</p>
                <div className="flex gap-2">
                   {[
                     { id: 'en', label: 'English' },
@@ -100,6 +100,11 @@ const Navbar = () => {
                     </button>
                   ))}
                </div>
+             </div>
+
+             <div className={`mt-6 flex items-center gap-2 p-3 rounded-xl border ${isOffline ? 'bg-orange-50 border-orange-100 text-orange-600' : 'bg-green-50 border-green-100 text-green-600'}`}>
+                <div className={`w-2 h-2 rounded-full animate-pulse ${isOffline ? 'bg-orange-500' : 'bg-green-500'}`}></div>
+                <p className="text-[9px] font-black uppercase tracking-wider">{isOffline ? t.offlineMode : t.onlineMode}</p>
              </div>
            </div>
 
