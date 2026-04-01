@@ -34,7 +34,7 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  @apply bg-slate-50 text-slate-900 antialiased overflow-x-hidden selection:bg-pink-100 selection:text-pink-900;
+  @apply bg-slate-50 text-black antialiased overflow-x-hidden selection:bg-pink-100 selection:text-pink-900;
   -webkit-tap-highlight-color: transparent;
 }
 

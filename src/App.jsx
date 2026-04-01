@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { LayoutDashboard, ShoppingBag, Receipt, TrendingUp, Sparkles, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ShopProvider, useShop } from './context/ShopContext';
 
 import Dashboard from './pages/Dashboard';
@@ -44,22 +45,22 @@ const Navbar = () => {
             <Sparkles className="text-white" size={24} />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-slate-900 leading-none tracking-tight">Apsara</h1>
-            <span className={`text-[10px] font-black uppercase tracking-[0.3em] text-slate-400`}>General Store</span>
+            <h1 className="text-2xl font-black text-black leading-none tracking-tight">Apsara</h1>
+            <span className={`text-[10px] font-black uppercase tracking-[0.3em] text-black/40`}>General Store</span>
           </div>
         </div>
 
         <div className="flex-1 space-y-2 overflow-y-auto custom-scrollbar pr-2 mb-6">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-4">{t.mainMenu}</p>
+          <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-4 mb-4">{t.mainMenu}</p>
           {links.map(link => (
             <Link 
               key={link.path}
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all duration-300 ${
+              className={`flex items-center gap-4 px-6 py-4 rounded-2xl font-black transition-all duration-300 ${
                 isActive(link.path) 
                    ? `${themeColors[theme]} text-white shadow-xl shadow-slate-200 scale-[1.02]` 
-                   : `text-slate-500 hover:bg-slate-50 hover:text-slate-900`
+                   : `text-black/60 hover:bg-slate-50 hover:text-black`
               }`}
             >
               {React.cloneElement(link.icon, { size: 22 })}
@@ -71,7 +72,7 @@ const Navbar = () => {
         <div className="mt-auto space-y-8">
            <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
              <div className="mb-6">
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{t.personalize}</p>
+               <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-4">{t.personalize}</p>
                <div className="flex justify-between items-center bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
                   {['pink', 'blue', 'purple', 'emerald'].map(c => (
                     <button 
@@ -84,7 +85,7 @@ const Navbar = () => {
              </div>
 
              <div className="mb-6">
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{t.language}</p>
+               <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-4">{t.language}</p>
                <div className="flex gap-2">
                   {[
                     { id: 'en', label: 'English' },
@@ -94,7 +95,7 @@ const Navbar = () => {
                     <button 
                       key={l.id}
                       onClick={() => setLang(l.id)}
-                      className={`flex-1 py-3 rounded-xl font-black text-[10px] transition-all border ${lang === l.id ? `${themeColors[theme]} text-white border-transparent shadow-lg` : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'}`}
+                      className={`flex-1 py-3 rounded-xl font-black text-[10px] transition-all border ${lang === l.id ? `${themeColors[theme]} text-white border-transparent shadow-lg` : 'bg-white text-black/40 border-slate-100 hover:bg-slate-50'}`}
                     >
                       {l.label}
                     </button>
@@ -109,8 +110,8 @@ const Navbar = () => {
            </div>
 
            <div className="text-center pb-4">
-              <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em]">Business Pro Edition</p>
-              <p className="text-[8px] font-bold text-slate-400 mt-1 opacity-50">V 1.2.0 • Build 2024</p>
+              <p className="text-[9px] font-black text-black/20 uppercase tracking-[0.3em]">Business Pro Edition</p>
+              <p className="text-[8px] font-bold text-black/20 mt-1">V 1.2.0 • Build 2024</p>
            </div>
         </div>
       </nav>
@@ -164,7 +165,7 @@ const ThemeContainer = () => {
           style: {
             borderRadius: '20px',
             background: '#fff',
-            color: '#0f172a',
+            color: '#000',
             fontWeight: 'bold',
             padding: '16px 24px',
             border: '1px solid #f1f5f9',
