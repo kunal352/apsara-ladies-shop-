@@ -57,7 +57,7 @@ const Navbar = () => {
               key={link.path}
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center gap-4 px-6 py-4 rounded-2xl font-black transition-all duration-300 ${
+              className={`flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all duration-300 ${
                 isActive(link.path) 
                    ? `${themeColors[theme]} text-white shadow-xl shadow-slate-200 scale-[1.02]` 
                    : `text-black/60 hover:bg-slate-50 hover:text-black`
@@ -71,19 +71,6 @@ const Navbar = () => {
 
         <div className="mt-auto space-y-8">
            <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
-             <div className="mb-6">
-               <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-4">{t.personalize}</p>
-               <div className="flex justify-between items-center bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
-                  {['pink', 'blue', 'purple', 'emerald'].map(c => (
-                    <button 
-                      key={c}
-                      onClick={() => setTheme(c)}
-                      className={`w-8 h-8 rounded-xl transition-all ${themeColors[c]} ${theme === c ? 'scale-110 shadow-lg ring-4 ring-white' : 'opacity-30 hover:opacity-100 scale-90'}`}
-                    />
-                  ))}
-               </div>
-             </div>
-
              <div className="mb-6">
                <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-4">{t.language}</p>
                <div className="flex gap-2">
@@ -99,6 +86,19 @@ const Navbar = () => {
                     >
                       {l.label}
                     </button>
+                  ))}
+               </div>
+             </div>
+
+             <div className="mb-6">
+               <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] mb-4">{t.personalize}</p>
+               <div className="flex justify-between items-center bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                  {['pink', 'blue', 'purple', 'emerald'].map(c => (
+                    <button 
+                      key={c}
+                      onClick={() => setTheme(c)}
+                      className={`w-8 h-8 rounded-xl transition-all ${themeColors[c]} ${theme === c ? 'scale-110 shadow-lg ring-4 ring-white' : 'opacity-30 hover:opacity-100 scale-90'}`}
+                    />
                   ))}
                </div>
              </div>
