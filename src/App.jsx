@@ -11,7 +11,7 @@ import Reports from './pages/Reports';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { lang, setLang, t, theme, setTheme, activeTheme } = useShop();
+  const { lang, setLang, t, theme, setTheme, activeTheme, isOffline } = useShop();
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 

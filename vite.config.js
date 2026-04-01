@@ -13,18 +13,7 @@ export default defineConfig({
         short_name: 'Apsara',
         description: 'Premium Inventory & Billing for Apsara Ladies Shop',
         theme_color: '#db2777',
-        icons: [
-          {
-            src: 'https://raw.githubusercontent.com/kunal352/apsara-ladies-shop-/master/public/icon-192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'https://raw.githubusercontent.com/kunal352/apsara-ladies-shop-/master/public/icon-512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
+        icons: []
       },
       workbox: {
         runtimeCaching: [
