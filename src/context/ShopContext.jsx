@@ -79,7 +79,12 @@ export const ShopProvider = ({ children }) => {
   const addProduct = async (product) => {
     const localId = Date.now();
     const optimisticProduct = { ...product, id: localId, sold: 0 };
-    setProducts(prev => [optimisticProduct, ...prev]);
+    
+    setProducts(prev => {
+      const updated = [optimisticProduct, ...prev];
+      localStorage.setItem('apsara_products_backup', JSON.stringify(updated));
+      return updated;
+    });
 
     try {
       const res = await fetch(`${API_URL}/products`, {
@@ -89,18 +94,24 @@ export const ShopProvider = ({ children }) => {
       });
       if (res.ok) {
         const saved = await res.json();
-        setProducts(prev => prev.map(p => p.id === localId ? { ...saved, id: saved._id } : p));
+        setProducts(prev => {
+           const updated = prev.map(p => p.id === localId ? { ...saved, id: saved._id } : p);
+           localStorage.setItem('apsara_products_backup', JSON.stringify(updated));
+           return updated;
+        });
         toast.success('Synced to Cloud!');
       }
     } catch (err) {
       toast('Saved locally (Offline)', { icon: '📂' });
-    } finally {
-      localStorage.setItem('apsara_products_backup', JSON.stringify(products));
     }
   };
 
   const removeProduct = async (id) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
+    setProducts(prev => {
+      const updated = prev.filter(p => p.id !== id);
+      localStorage.setItem('apsara_products_backup', JSON.stringify(updated));
+      return updated;
+    });
     try {
       await fetch(`${API_URL}/products/${id}`, { method: 'DELETE' });
     } catch (err) {
@@ -109,7 +120,11 @@ export const ShopProvider = ({ children }) => {
   };
 
   const updateProduct = async (id, updated) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+    setProducts(prev => {
+      const newProds = prev.map(p => p.id === id ? { ...p, ...updated } : p);
+      localStorage.setItem('apsara_products_backup', JSON.stringify(newProds));
+      return newProds;
+    });
     try {
       await fetch(`${API_URL}/products/${id}`, {
         method: 'PUT',
@@ -130,14 +145,23 @@ export const ShopProvider = ({ children }) => {
        date: new Date().toISOString()
     };
 
-    setOrders(prev => [optimisticBill, ...prev]);
-    setProducts(prev => prev.map(p => {
-      const billItem = billData.items.find(item => item.id === p.id);
-      if (billItem) {
-        return { ...p, stock: p.stock - billItem.qty, sold: p.sold + billItem.qty };
-      }
-      return p;
-    }));
+    setOrders(prev => {
+      const updated = [optimisticBill, ...prev];
+      localStorage.setItem('apsara_orders_backup', JSON.stringify(updated));
+      return updated;
+    });
+
+    setProducts(prev => {
+      const updated = prev.map(p => {
+        const billItem = billData.items.find(item => item.id === p.id);
+        if (billItem) {
+          return { ...p, stock: p.stock - billItem.qty, sold: p.sold + billItem.qty };
+        }
+        return p;
+      });
+      localStorage.setItem('apsara_products_backup', JSON.stringify(updated));
+      return updated;
+    });
 
     try {
       const res = await fetch(`${API_URL}/billing`, {
@@ -153,7 +177,11 @@ export const ShopProvider = ({ children }) => {
       if (res.ok) {
         const data = await res.json();
         const savedBill = { ...data.bill, id: data.bill._id, total: data.bill.totalAmount };
-        setOrders(prev => prev.map(o => o.id === localBillId ? savedBill : o));
+        setOrders(prev => {
+           const updated = prev.map(o => o.id === localBillId ? savedBill : o);
+           localStorage.setItem('apsara_orders_backup', JSON.stringify(updated));
+           return updated;
+        });
         toast.success('Bill synced to Cloud!');
         return savedBill;
       }
