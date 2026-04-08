@@ -1,67 +1,44 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection with better handling for Vercel
 const MONGO_URI = (process.env.MONGO_URI || '').trim();
-
 let cachedDb = null;
 
 async function connectToDatabase() {
   if (cachedDb) return cachedDb;
-  if (!MONGO_URI) {
-    console.error('MONGO_URI is missing!');
-    return null;
-  }
-  
+  if (!MONGO_URI) return null;
   try {
     const db = await mongoose.connect(MONGO_URI);
-    console.log('✅ Connected to MongoDB Atlas');
     cachedDb = db;
     return db;
   } catch (err) {
-    console.error('❌ MongoDB Connection Error:', err.message);
     return null;
   }
 }
 
-// Middleware to ensure DB connection
 app.use(async (req, res, next) => {
   await connectToDatabase();
   next();
 });
 
-// Models (Imported from backend/models or redefined)
 const productSchema = new mongoose.Schema({
-  name: String,
-  price: Number,
-  category: String,
-  stock: Number,
-  sold: { type: Number, default: 0 },
-  image: String
+  name: String, price: Number, category: String, stock: Number, sold: { type: Number, default: 0 }, image: String
 }, { timestamps: true });
-
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 
 const billSchema = new mongoose.Schema({
-  billNumber: String,
-  customerName: String,
-  customerMobile: String,
-  items: Array,
-  totalAmount: Number,
-  date: { type: Date, default: Date.now }
+  billNumber: String, customerName: String, customerMobile: String, items: Array, totalAmount: Number, date: { type: Date, default: Date.now }
 }, { timestamps: true });
-
 const Bill = mongoose.models.Bill || mongoose.model('Bill', billSchema);
-
-// --- API ROUTES ---
 
 app.get('/api/products', async (req, res) => {
   try {
@@ -105,13 +82,9 @@ app.post('/api/billing', async (req, res) => {
     const billNumber = `BIL-${Date.now()}`;
     const newBill = new Bill({ billNumber, customerName, customerMobile, items, totalAmount });
     await newBill.save();
-
     for (const item of items) {
-      await Product.findByIdAndUpdate(item.productId, {
-        $inc: { stock: -item.qty, sold: item.qty }
-      });
+      await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -item.qty, sold: item.qty } });
     }
-
     res.json({ success: true, bill: newBill });
   } catch (err) { res.status(400).json({ error: err.message }); }
 });
@@ -120,7 +93,6 @@ app.get('/api/stats', async (req, res) => {
   try {
     const products = await Product.find();
     const bills = await Bill.find();
-    
     res.json({
       totalProducts: products.length,
       totalSold: products.reduce((sum, p) => sum + (p.sold || 0), 0),
@@ -131,4 +103,4 @@ app.get('/api/stats', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-module.exports = app;
+export default app;
