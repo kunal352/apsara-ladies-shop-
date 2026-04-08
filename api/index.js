@@ -9,14 +9,34 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI;
+// MongoDB Connection with better handling for Vercel
+const MONGO_URI = (process.env.MONGO_URI || '').trim();
 
-if (MONGO_URI) {
-  mongoose.connect(MONGO_URI)
-    .then(() => console.log('✅ Connected to MongoDB Atlas'))
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+let cachedDb = null;
+
+async function connectToDatabase() {
+  if (cachedDb) return cachedDb;
+  if (!MONGO_URI) {
+    console.error('MONGO_URI is missing!');
+    return null;
+  }
+  
+  try {
+    const db = await mongoose.connect(MONGO_URI);
+    console.log('✅ Connected to MongoDB Atlas');
+    cachedDb = db;
+    return db;
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    return null;
+  }
 }
+
+// Middleware to ensure DB connection
+app.use(async (req, res, next) => {
+  await connectToDatabase();
+  next();
+});
 
 // Models (Imported from backend/models or redefined)
 const productSchema = new mongoose.Schema({
