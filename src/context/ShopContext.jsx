@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 const ShopContext = createContext();
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export const useShop = () => {
   const context = useContext(ShopContext);
@@ -215,7 +215,6 @@ export const ShopProvider = ({ children }) => {
       offlineMode: "Using local mode (Offline)", onlineMode: "Connected (Cloud)",
       dashboard: "Dashboard", billing: "New Bill", inventory: 'Inventory', reports: 'Reports',
       searchProducts: 'Search Products...',
-      addProduct: 'Add Product',
       totalRevenue: "Total Revenue", stockGela: "Total Sold", stockShilak: "In Stock", varieties: "Total Varieties", stockValue: "Stock Value",
       collection: "Collection", search: "Search items...", customerName: "Customer Name", mobile: "Mobile Number", completeSale: "Complete Sale",
       remainingStock: "In Stock", addProduct: "Add New Item", price: "Price", category: "Category",
@@ -231,7 +230,6 @@ export const ShopProvider = ({ children }) => {
       offlineMode: "ऑफलाइन मोड (पीसीवर सेव्ह होत आहे)", onlineMode: "ऑनलाइन (क्लाउड बॅकअप चालू)",
       dashboard: "डॅशबोर्ड", billing: "नवीन बिल", inventory: "इन्व्हेंटरी", reports: "रिपोर्ट्स",
       searchProducts: 'वस्तू शोधा...',
-      addProduct: 'नवीन वस्तू जोडा',
       totalRevenue: "एकूण कमाई", stockGela: "विकलेला स्टॉक (गेला)", stockShilak: "शिल्लक स्टॉक", varieties: "एकूण प्रकार", stockValue: "एकूण स्टॉक किंमत",
       collection: "कलेक्शन", search: "वस्तू शोधा...", customerName: "ग्राहकाचे नाव", mobile: "मोबाईल नंबर", completeSale: "विक्री पूर्ण करा",
       remainingStock: "शिल्लक", addProduct: "नवीन वस्तू जोडा", price: "किंमत", category: "कॅटेगरी",
