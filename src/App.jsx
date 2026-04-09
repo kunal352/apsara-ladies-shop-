@@ -59,25 +59,27 @@ const Navbar = () => {
               key={link.path}
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`group flex items-center justify-between px-6 py-6 rounded-[28px] font-bold transition-all duration-500 animate-slide-in relative overflow-hidden ${
+              className={`group flex items-center justify-between px-6 py-6 rounded-[28px] font-bold transition-all duration-500 animate-slide-in relative overflow-hidden border-2 ${
                 isActive(link.path) 
-                ? 'bg-white shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] scale-[1.02]' 
-                : 'hover:bg-slate-50/50 hover:translate-x-2'
+                ? 'bg-white border-white shadow-[0_20px_40px_-10px_rgba(0,0,0,0.08)] scale-[1.02]' 
+                : 'bg-white/40 border-transparent hover:bg-pink hover:border-pink hover:shadow-xl hover:-translate-y-1'
               }`}
               style={{ animationDelay: `${idx * 100}ms` }}
             >
-              <div className={`flex items-center gap-5 ${isActive(link.path) ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-800'}`}>
-                <div className={`p-3.5 rounded-[22px] transition-all duration-500 ${
+              <div className={`flex items-center gap-5 ${isActive(link.path) ? 'text-slate-800' : 'text-slate-500 group-hover:text-slate-800'}`}>
+                <div className={`p-4 rounded-[22px] transition-all duration-500 ${
                   isActive(link.path) 
                     ? `${themeColors[theme]} text-white shadow-2xl shadow-pink-500/20 rotate-12` 
-                    : 'bg-slate-50 group-hover:bg-white group-hover:shadow-lg'
+                    : 'bg-white shadow-sm group-hover:bg-slate-50 group-hover:rotate-6'
                 }`}>
-                  {React.cloneElement(link.icon, { size: 22 })}
+                  {React.cloneElement(link.icon, { size: 24 })}
                 </div>
-                <span className={`text-[17px] tracking-tight ${isActive(link.path) ? 'font-black' : 'font-semibold'}`}>{link.title}</span>
+                <span className={`text-[17px] tracking-tight ${isActive(link.path) ? 'font-black' : 'font-bold'}`}>{link.title}</span>
               </div>
-              {isActive(link.path) && (
-                <motion.div layoutId="activeDot" className={`w-1.5 h-1.5 rounded-full ${themeColors[theme]}`} />
+              {isActive(link.path) ? (
+                <div className={`w-2 h-2 rounded-full ${themeColors[theme]} shadow-lg animate-pulse`} />
+              ) : (
+                <ArrowRight size={16} className="text-slate-200 group-hover:text-slate-400 opacity-0 group-hover:opacity-100 transition-all" />
               )}
             </Link>
           ))}
