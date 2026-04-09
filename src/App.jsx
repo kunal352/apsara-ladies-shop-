@@ -59,16 +59,26 @@ const Navbar = () => {
               key={link.path}
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`group flex items-center justify-between px-6 py-4.5 rounded-[22px] font-bold transition-all duration-300 animate-slide-in`}
-              style={{ animationDelay: `${idx * 50}ms` }}
+              className={`group flex items-center justify-between px-6 py-6 rounded-[28px] font-bold transition-all duration-500 animate-slide-in relative overflow-hidden ${
+                isActive(link.path) 
+                ? 'bg-white shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] scale-[1.02]' 
+                : 'hover:bg-slate-50/50 hover:translate-x-2'
+              }`}
+              style={{ animationDelay: `${idx * 100}ms` }}
             >
-              <div className={`flex items-center gap-4 ${isActive(link.path) ? 'text-slate-800' : 'text-slate-500 group-hover:text-slate-800'}`}>
-                <div className={`p-2 rounded-xl transition-all ${isActive(link.path) ? `${themeColors[theme]} text-white shadow-lg` : 'bg-slate-50 group-hover:bg-slate-100'}`}>
-                  {React.cloneElement(link.icon, { size: 20 })}
+              <div className={`flex items-center gap-5 ${isActive(link.path) ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-800'}`}>
+                <div className={`p-3.5 rounded-[22px] transition-all duration-500 ${
+                  isActive(link.path) 
+                    ? `${themeColors[theme]} text-white shadow-2xl shadow-pink-500/20 rotate-12` 
+                    : 'bg-slate-50 group-hover:bg-white group-hover:shadow-lg'
+                }`}>
+                  {React.cloneElement(link.icon, { size: 22 })}
                 </div>
-                <span className="text-[15px]">{link.title}</span>
+                <span className={`text-[17px] tracking-tight ${isActive(link.path) ? 'font-black' : 'font-semibold'}`}>{link.title}</span>
               </div>
-              {isActive(link.path) && <ArrowRight size={16} className="text-slate-300" />}
+              {isActive(link.path) && (
+                <motion.div layoutId="activeDot" className={`w-1.5 h-1.5 rounded-full ${themeColors[theme]}`} />
+              )}
             </Link>
           ))}
         </div>
