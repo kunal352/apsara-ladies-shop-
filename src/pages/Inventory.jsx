@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit2, Trash2, X, Save, ShoppingBag, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, ShoppingBag, Search, Filter, ArrowUpRight, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Inventory = () => {
@@ -10,8 +10,7 @@ const Inventory = () => {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '', category: 'Kurti', price: '', stock: '' });
 
-  const categories = ['Kurti', 'Saree', 'Dress', 'Accessories'];
-
+  const categories = ['Kurti', 'Saree', 'Dress', 'Accessories', 'Silk', 'Cotton'];
   const [searchTerm, setSearchTerm] = useState('');
   
   const filteredProducts = products.filter(p => 
@@ -24,16 +23,14 @@ const Inventory = () => {
     try {
       if (editingId) {
         await updateProduct(editingId, { ...formData, price: Number(formData.price), stock: Number(formData.stock) });
-        toast.success('Inventory updated!');
+        toast.success('Collection Updated ✨');
       } else {
         await addProduct({ ...formData, price: Number(formData.price), stock: Number(formData.stock) });
-        toast.success('Collection added!');
+        toast.success('New Arrival Added 🌸');
       }
       setShowModal(false);
       setEditingId(null);
-    } catch (err) {
-      // Error handled in context
-    }
+    } catch (err) { }
   };
 
   const startEdit = (p) => {
@@ -44,191 +41,236 @@ const Inventory = () => {
 
   if (loading) {
     return (
-      <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 border-4 border-slate-200 border-t-pink-600 rounded-full animate-spin"></div>
-        <p className="font-black text-black uppercase tracking-widest text-xs">Loading Inventory...</p>
+      <div className="h-[70vh] flex flex-col items-center justify-center space-y-6">
+        <div className="w-16 h-16 border-[5px] border-slate-100 border-t-pink-600 rounded-full animate-spin"></div>
+        <p className="font-black text-slate-400 uppercase tracking-[0.5em] text-[10px]">Updating Boutique</p>
       </div>
     );
   }
 
-  const totalVal = filteredProducts.reduce((sum, p) => sum + (p.price * p.stock), 0);
+  const totalVal = filteredProducts.reduce((sum, p) => sum + ((p.price || 0) * (p.stock || 0)), 0);
   const lowStockCount = products.filter(p => p.stock < 5).length;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 md:space-y-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 md:p-8 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm gap-6">
-        <div className="w-full md:w-auto">
-           <h1 className="text-3xl md:text-4xl font-black text-black leading-none mb-2">{t.inventory}</h1>
-           <p className="font-bold uppercase tracking-widest text-[10px] theme-text">Apsara General Store • Stock Management</p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10 pb-20">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/40 backdrop-blur-xl p-10 rounded-[48px] border border-white/60 premium-shadow gap-8 relative overflow-hidden group">
+        <div className="absolute top-[-20%] right-[-10%] w-64 h-64 theme-bg opacity-[0.05] blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000"></div>
+        <div className="relative z-10 flex items-center gap-8">
+           <div className="w-20 h-20 theme-bg rounded-[26px] flex items-center justify-center shadow-2xl shadow-pink-500/20 rotate-3">
+              <ShoppingBag className="text-white" size={32} />
+           </div>
+           <div>
+              <h1 className="text-4xl md:text-5xl font-black text-slate-800 leading-none mb-3 tracking-tighter">{t.inventory}</h1>
+              <p className="font-black uppercase tracking-[0.4em] text-[10px] text-slate-400">Apsara • {products.length} Items Listed</p>
+           </div>
         </div>
         <button 
           onClick={() => { setEditingId(null); setFormData({ name: '', category: 'Kurti', price: '', stock: '' }); setShowModal(true); }}
-          className="w-full md:w-auto theme-bg text-white px-8 py-4 rounded-xl md:rounded-2xl font-black text-lg flex items-center justify-center md:justify-start gap-2 shadow-xl hover:-translate-y-1 transition-all"
+          className="w-full md:w-auto theme-bg text-white px-10 py-5 rounded-[24px] font-black text-lg flex items-center justify-center gap-3 shadow-2xl shadow-pink-500/30 hover:scale-105 active:scale-95 transition-all duration-300"
         >
-          <Plus size={20} /> {t.addProduct}
+          <Plus size={24} strokeWidth={3} /> {t.addProduct}
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <p className="text-[10px] font-black text-black/40 uppercase tracking-widest mb-1">Items</p>
-            <p className="text-2xl font-black text-black">{products.length}</p>
-         </div>
-         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <p className="text-[10px] font-black text-black/40 uppercase tracking-widest mb-1">Categories</p>
-            <p className="text-2xl font-black text-black">{[...new Set(products.map(p => p.category))].length}</p>
-         </div>
-         <div className="bg-red-50 p-6 rounded-3xl border border-red-100 shadow-sm">
-            <p className="text-[10px] font-black text-red-600/60 uppercase tracking-widest mb-1">Low Stock</p>
-            <p className="text-2xl font-black text-red-600">{lowStockCount}</p>
-         </div>
-         <div className="theme-bg-secondary p-6 rounded-3xl border theme-border shadow-sm">
-            <p className="text-[10px] font-black theme-text uppercase tracking-widest mb-1">Value</p>
-            <p className="text-2xl font-black theme-text">₹{totalVal}</p>
-         </div>
+      {/* Stats Summary Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+         {[
+           { label: 'Total Items', value: products.length, sub: 'Varieties', color: 'bg-white' },
+           { label: 'Categories', value: [...new Set(products.map(p => p.category))].length, sub: 'Types', color: 'bg-white' },
+           { label: 'Critical Stock', value: lowStockCount, sub: 'Low inventory', color: 'bg-red-50', text: 'text-red-600' },
+           { label: 'Total Value', value: `₹${totalVal.toLocaleString()}`, sub: 'Net worth', color: 'bg-indigo-50', text: 'text-indigo-600' }
+         ].map((stat, i) => (
+           <div key={i} className={`p-8 glass-card rounded-[32px] premium-shadow border border-white/40 group hover:bg-white transition-all duration-500`}>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{stat.label}</p>
+              <p className={`text-3xl font-black ${stat.text || 'text-slate-800'} tracking-tight`}>{stat.value}</p>
+              <p className="text-[10px] font-bold text-slate-300 mt-1 uppercase">{stat.sub}</p>
+           </div>
+         ))}
       </div>
 
-      <div className="bg-white p-4 md:p-6 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+      {/* Search & Filter Bar */}
+      <div className="glass-card p-4 rounded-[32px] premium-shadow flex items-center gap-6 border border-white/40">
+        <div className="relative flex-1 group">
+          <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-pink-500 transition-colors" size={24} />
           <input 
             type="text" 
             placeholder={t.searchProducts}
-            className="w-full pl-16 pr-8 py-4 md:py-5 rounded-xl md:rounded-[24px] bg-slate-50 border-none outline-none font-bold text-base md:text-lg text-black focus:ring-4 transition-all placeholder:text-black/30"
+            className="w-full pl-20 pr-10 py-6 rounded-[24px] bg-slate-50/50 border-none outline-none font-bold text-xl text-slate-800 focus:bg-white focus:ring-[10px] focus:ring-slate-100 transition-all placeholder:text-slate-300"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        <button className="hidden md:flex items-center gap-3 bg-white px-8 py-6 rounded-[24px] border border-slate-100 font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-all">
+          <Filter size={18} /> Filter List
+        </button>
       </div>
 
-      <div className="bg-white rounded-[24px] md:rounded-[40px] border border-slate-100 shadow-sm overflow-hidden shadow-xl shadow-slate-200/50">
-        <div className="hidden md:block overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left">
-            <thead className="bg-slate-50/50 border-b border-slate-100 font-black text-black/40 text-[10px] uppercase tracking-[0.2em]">
-              <tr>
-                <th className="px-12 py-10 text-left">Item Name</th>
-                <th className="px-12 py-10 text-center">{t.price}</th>
-                <th className="px-12 py-10 text-center">{t.stockShilak}</th>
-                <th className="px-12 py-10 text-center">{t.stockGela}</th>
-                <th className="px-12 py-10 text-right">Actions</th>
+      {/* Inventory Table/List */}
+      <div className="glass-card rounded-[48px] premium-shadow border border-white/40 overflow-hidden">
+        <div className="hidden lg:block">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-50 bg-slate-50/30">
+                <th className="px-12 py-10 text-left text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Prdouct Detail</th>
+                <th className="px-12 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Unit Price</th>
+                <th className="px-12 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Quantity</th>
+                <th className="px-12 py-10 text-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Total Status</th>
+                <th className="px-12 py-10 text-right text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredProducts.map(p => (
-                <tr key={p.id} className="transition-colors group hover:bg-slate-50">
-                  <td className="px-12 py-8">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner shadow-slate-900/10 transition-transform group-hover:scale-110 theme-bg-secondary theme-text">🛍️</div>
+            <tbody className="divide-y divide-slate-50">
+              {filteredProducts.map((p, idx) => (
+                <motion.tr 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  key={p.id} 
+                  className="group hover:bg-slate-50/70 transition-colors"
+                >
+                  <td className="px-12 py-10">
+                    <div className="flex items-center gap-8">
+                      <div className="w-16 h-16 rounded-[24px] theme-bg-secondary theme-text flex items-center justify-center font-black text-2xl shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                         <span className="opacity-80">👗</span>
+                      </div>
                       <div>
-                        <p className="font-black text-black text-lg uppercase leading-none mb-1">{p.name}</p>
-                        <p className="text-[10px] font-black tracking-widest uppercase border-l-2 pl-2 ml-1 mt-2 theme-text theme-border">{p.category}</p>
+                        <p className="font-black text-slate-800 text-xl tracking-tight mb-2 group-hover:text-pink-600 transition-colors uppercase">{p.name}</p>
+                        <span className="text-[9px] font-black bg-white px-3 py-1.5 rounded-lg border border-slate-100 text-slate-400 uppercase tracking-widest shadow-sm group-hover:text-pink-500 group-hover:border-pink-100 transition-all">{p.category}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-12 py-8 text-center font-black text-2xl text-black">₹{p.price}</td>
-                  <td className="px-12 py-8 text-center">
-                    <div className={`px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border-2 ${p.stock < 5 ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : 'bg-green-50 border-green-200 text-green-600'}`}>
-                      <span className={`w-2 h-2 rounded-full ${p.stock < 5 ? 'bg-red-600' : 'bg-green-600'}`}></span>
-                      {p.stock} {t.shilak}
+                  <td className="px-12 py-10 text-center">
+                    <p className="text-3xl font-black text-slate-800 tracking-tighter">₹{p.price.toLocaleString()}</p>
+                  </td>
+                  <td className="px-12 py-10 text-center">
+                    <div className={`px-8 py-4 rounded-[20px] font-black text-xs inline-flex flex-col items-center justify-center border-2 shadow-sm transition-all duration-500 ${p.stock < 5 ? 'bg-red-50 border-red-100 text-red-600 animate-pulse scale-105' : 'bg-emerald-50 border-emerald-100 text-emerald-600'}`}>
+                      <span className="text-2xl leading-none mb-1">{p.stock}</span>
+                      <span className="uppercase tracking-widest text-[8px] opacity-60">{t.unitsLeft}</span>
                     </div>
                   </td>
-                  <td className="px-12 py-8 text-center">
-                    <div className="bg-slate-900 px-6 py-3 rounded-2xl font-black text-sm inline-flex items-center gap-2 border border-slate-800 shadow-xl shadow-slate-900/50">
-                      <span className="text-white font-mono">{p.sold}</span> <span className="text-slate-400">{t.gela}</span>
+                  <td className="px-12 py-10 text-center">
+                    <div className="inline-flex items-center gap-4 bg-slate-900 px-8 py-4 rounded-[20px] text-white shadow-xl shadow-slate-950/20 group-hover:bg-slate-800 transition-colors">
+                       <TrendingUp size={18} className="text-pink-400" />
+                       <div>
+                          <p className="text-base font-black leading-none">{p.sold}</p>
+                          <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest mt-1">Sold Units</p>
+                       </div>
                     </div>
                   </td>
-                  <td className="px-12 py-8 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => startEdit(p)} className="p-3 bg-slate-50 text-black/30 rounded-xl transition-all hover:theme-bg hover:text-white shadow-sm"><Edit2 size={18} /></button>
-                      <button onClick={() => removeProduct(p.id)} className="p-3 bg-slate-50 text-black/30 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-sm"><Trash2 size={18} /></button>
+                  <td className="px-12 py-10 text-right">
+                    <div className="flex items-center justify-end gap-3 opacity-20 group-hover:opacity-100 transition-all duration-300">
+                      <button onClick={() => startEdit(p)} className="p-4 bg-white text-slate-400 rounded-2xl hover:text-indigo-600 hover:shadow-xl hover:-translate-y-1 transition-all border border-slate-100"><Edit2 size={20} /></button>
+                      <button onClick={() => removeProduct(p.id)} className="p-4 bg-white text-slate-400 rounded-2xl hover:text-red-500 hover:shadow-xl hover:-translate-y-1 transition-all border border-slate-100"><Trash2 size={20} /></button>
                     </div>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Mobile View */}
-        <div className="md:hidden divide-y divide-slate-100">
-          {filteredProducts.map(p => (
-            <div key={p.id} className="p-6 space-y-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner shadow-slate-900/10 theme-bg-secondary theme-text">🛍️</div>
-                   <div>
-                     <h3 className="font-black text-black uppercase leading-tight mb-1 text-lg">{p.name}</h3>
-                     <p className="text-[9px] font-black tracking-widest uppercase theme-text">{p.category}</p>
-                   </div>
+        {/* Mobile Modern Cards */}
+        <div className="lg:hidden p-6 space-y-6 bg-slate-50/50">
+          {filteredProducts.map((p, idx) => (
+             <div key={p.id} className="bg-white p-8 rounded-[40px] premium-shadow space-y-8 relative overflow-hidden active:scale-[0.98] transition-transform">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 rounded-2xl theme-bg-secondary theme-text flex items-center justify-center text-xl shadow-inner">🛍️</div>
+                    <div>
+                      <h3 className="font-black text-slate-800 text-xl tracking-tight leading-tight">{p.name}</h3>
+                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{p.category}</p>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-xl text-slate-800 font-black text-xl">₹{p.price}</div>
                 </div>
-                <div className="text-right">
-                  <p className="text-2xl font-black text-black">₹{p.price}</p>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className={`p-4 rounded-2xl border-2 flex flex-col items-center justify-center ${p.stock < 5 ? 'bg-red-50 border-red-100 text-red-600' : 'bg-green-50 border-green-100 text-green-600'}`}>
-                  <span className="text-[9px] font-black uppercase tracking-widest mb-1 opacity-60">Stock</span>
-                  <span className="text-lg font-black">{p.stock}</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className={`p-5 rounded-[24px] border-2 flex flex-col items-center justify-center ${p.stock < 5 ? 'bg-red-50 border-red-100 text-red-600' : 'bg-emerald-50 border-emerald-100 text-emerald-600'}`}>
+                    <span className="text-[9px] font-black uppercase tracking-widest mb-1 opacity-60">Inventory</span>
+                    <span className="text-2xl font-black">{p.stock} <span className="text-[10px]">left</span></span>
+                  </div>
+                  <div className="p-5 rounded-[24px] bg-slate-900 border border-slate-800 flex flex-col items-center justify-center text-white">
+                    <span className="text-[9px] font-black uppercase tracking-widest mb-1 text-slate-400">Total Sold</span>
+                    <span className="text-2xl font-black">{p.sold} <span className="text-[10px] text-slate-500">units</span></span>
+                  </div>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center">
-                  <span className="text-[9px] font-black uppercase tracking-widest mb-1 text-slate-400">Sold</span>
-                  <span className="text-lg font-black text-white">{p.sold}</span>
-                </div>
-              </div>
 
-              <div className="flex gap-2">
-                <button onClick={() => startEdit(p)} className="flex-1 py-4 bg-slate-50 text-black rounded-xl font-black flex items-center justify-center gap-2 border border-slate-100 active:scale-95 transition-all">
-                  <Edit2 size={16} /> Edit
-                </button>
-                <button onClick={() => removeProduct(p.id)} className="w-14 h-14 bg-red-50 text-red-500 rounded-xl flex items-center justify-center border border-red-100 active:scale-95 transition-all">
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            </div>
+                <div className="flex gap-4">
+                  <button onClick={() => startEdit(p)} className="flex-1 py-5 bg-slate-100 text-slate-800 rounded-[20px] font-bold text-sm tracking-tight active:bg-slate-200 transition-colors flex items-center justify-center gap-3">
+                    <Edit2 size={18} /> Manage
+                  </button>
+                  <button onClick={() => removeProduct(p.id)} className="w-16 h-16 bg-red-50 text-red-500 rounded-[20px] flex items-center justify-center border border-red-100 active:scale-90 transition-all">
+                    <Trash2 size={24} />
+                  </button>
+                </div>
+             </div>
           ))}
         </div>
+        
+        {filteredProducts.length === 0 && (
+          <div className="text-center py-40 space-y-8 animate-fade-in bg-slate-50/50">
+             <div className="w-24 h-24 bg-white rounded-[38px] flex items-center justify-center mx-auto shadow-2xl shadow-slate-200">
+               <Search size={40} className="text-slate-200" />
+             </div>
+             <p className="text-slate-300 font-extrabold uppercase tracking-[0.5em] text-xs">No Boutique items Found</p>
+          </div>
+        )}
       </div>
 
+      {/* Modern Modal / Editor */}
       <AnimatePresence>
         {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 md:p-8">
-            <motion.div initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[32px] md:rounded-[40px] w-full max-w-xl p-8 md:p-12 shadow-2xl relative overflow-y-auto max-h-[90vh] custom-scrollbar">
-               <button onClick={() => setShowModal(false)} className="absolute top-6 right-6 md:top-10 md:right-10 text-black/20 hover:text-black"><X /></button>
-               <h2 className="text-2xl md:text-4xl font-black text-black mb-8 md:mb-10">{editingId ? 'Edit Product' : 'Add New Arrivals'}</h2>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950/40 backdrop-blur-xl z-[100] flex items-center justify-center p-6 md:p-12">
+            <motion.div initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[48px] w-full max-w-2xl p-10 md:p-16 shadow-[0_40px_100px_rgba(0,0,0,0.3)] relative overflow-y-auto max-h-[90vh] custom-scrollbar border border-white/20">
+               <button onClick={() => setShowModal(false)} className="absolute top-10 right-10 p-3 bg-slate-50 text-slate-300 rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all"><X size={24}/></button>
                
-               <form onSubmit={handleSave} className="space-y-6">
-                 <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4 mb-2 block">Product Name</label>
-                    <input required className="w-full px-6 md:px-8 py-4 md:py-5 rounded-xl md:rounded-2xl bg-slate-50 border-none outline-none focus:ring-4 focus:ring-slate-100 transition-all font-bold text-base md:text-lg text-black" placeholder="E.g. Traditional Saree" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+               <div className="flex items-center gap-6 mb-16">
+                  <div className="p-5 theme-bg rounded-[24px] text-white shadow-xl rotate-6 group-hover:rotate-0 transition-transform">
+                     <Sparkles size={32} />
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter leading-none">{editingId ? 'Refine Product' : 'New Collection'}</h2>
+               </div>
+               
+               <form onSubmit={handleSave} className="space-y-10">
+                 <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 px-4">The Identification</label>
+                    <input required className="w-full px-10 py-6 rounded-[28px] bg-slate-50/80 border-none outline-none focus:bg-white focus:ring-[15px] focus:ring-slate-100 transition-all font-black text-xl text-slate-800 placeholder:text-slate-300" placeholder="Product Title Here..." value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                  </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4 mb-2 block">Category</label>
+                 
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 px-4">Category</label>
                       <input 
                         list="categories-list"
-                        className="w-full px-6 md:px-8 py-4 md:py-5 rounded-xl md:rounded-2xl bg-slate-50 border-none outline-none font-bold text-base md:text-lg text-black focus:ring-4 focus:ring-slate-100" 
+                        className="w-full px-10 py-6 rounded-[28px] bg-slate-50/80 border-none outline-none font-bold text-lg text-slate-800 focus:bg-white focus:ring-[15px] focus:ring-slate-100 transition-all shadow-sm"
                         value={formData.category} 
                         onChange={e => setFormData({...formData, category: e.target.value})}
-                        placeholder="Select or Type..."
+                        placeholder="Select Essence..."
                       />
                       <datalist id="categories-list">
                         {categories.map(c => <option key={c} value={c} />)}
                       </datalist>
                     </div>
-                    <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4 mb-2 block md:text-center">Price (₹)</label>
-                      <input required type="number" className="w-full px-6 md:px-8 py-4 md:py-5 rounded-xl md:rounded-2xl bg-slate-50 border-none outline-none font-black md:text-center text-xl md:text-2xl text-black" placeholder="00" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+                    <div className="space-y-4 text-center">
+                      <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Unit Price (₹)</label>
+                      <input required type="number" className="w-full px-10 py-6 rounded-[28px] bg-slate-50/80 border-none outline-none font-black text-center text-4xl text-slate-800 focus:bg-white focus:ring-[15px] focus:ring-slate-100 transition-all shadow-sm" placeholder="00" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
                     </div>
                  </div>
-                 <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-black/40 px-4 mb-2 block">Opening Stock Qty</label>
-                    <input required type="number" className="w-full px-6 md:px-8 py-4 md:py-5 rounded-xl md:rounded-2xl bg-slate-50 border-none outline-none font-bold text-base md:text-lg text-black" placeholder="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
+
+                 <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 px-4">Starting Quantity</label>
+                    <div className="relative group">
+                       <Package className="absolute left-10 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-pink-500 transition-colors" size={24} />
+                       <input required type="number" className="w-full pl-20 pr-10 py-6 rounded-[28px] bg-slate-50/80 border-none outline-none font-black text-xl text-slate-800 focus:bg-white focus:ring-[15px] focus:ring-slate-100 transition-all" placeholder="Volume in stock..." value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
+                    </div>
                  </div>
                  
-                 <button type="submit" className={`w-full theme-bg text-white py-5 md:py-6 rounded-xl md:rounded-2xl font-black text-lg md:text-xl hover:theme-hover transition-all shadow-xl shadow-slate-200 mt-4 flex items-center justify-center gap-4`}>
-                    <Save size={24} /> {editingId ? 'Store Changes' : 'Confirm New Arrival'}
-                 </button>
+                 <div className="pt-6">
+                   <button type="submit" className={`w-full theme-bg text-white py-8 rounded-[32px] font-black text-xl hover:scale-[1.03] active:scale-95 transition-all shadow-[0_25px_60px_-15px_rgba(190,24,93,0.4)] flex items-center justify-center gap-6 group`}>
+                      <Save size={28} className="group-hover:rotate-12 transition-transform" /> 
+                      {editingId ? 'Update Boutique' : 'Introduce Collection'}
+                   </button>
+                 </div>
                </form>
             </motion.div>
           </motion.div>
