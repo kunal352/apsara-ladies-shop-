@@ -42,6 +42,12 @@ export const ShopProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        // Step 1: Pre-populate from Local Storage instantly for zero-latency startup
+        const localProds = JSON.parse(localStorage.getItem('apsara_products_backup') || '[]');
+        const localOrders = JSON.parse(localStorage.getItem('apsara_orders_backup') || '[]');
+        setProducts(localProds);
+        setOrders(localOrders);
+
         const [prodRes, billRes] = await Promise.all([
           fetch(`${API_URL}/products`).catch(() => null),
           fetch(`${API_URL}/bills`).catch(() => null)
@@ -50,24 +56,85 @@ export const ShopProvider = ({ children }) => {
         if (prodRes && prodRes.ok && billRes && billRes.ok) {
           const prodData = await prodRes.json();
           const billData = await billRes.json();
-          const mappedProds = prodData.map(p => ({ ...p, id: p._id }));
-          const mappedOrders = billData.map(b => ({ ...b, id: b._id, total: b.totalAmount }));
+          let mappedProds = prodData.map(p => ({ ...p, id: p._id }));
+          let mappedOrders = billData.map(b => ({ ...b, id: b._id, total: b.totalAmount }));
           
+          // Step 2: Auto-sync any products added offline (numeric temporary IDs)
+          const unsyncedProds = localProds.filter(lp => typeof lp.id === 'number');
+          for (const up of unsyncedProds) {
+            try {
+              const { id, ...prodToSave } = up;
+              const res = await fetch(`${API_URL}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prodToSave)
+              });
+              if (res.ok) {
+                const saved = await res.json();
+                mappedProds.push({ ...saved, id: saved._id });
+              }
+            } catch (err) {
+              console.error('Failed to sync offline product:', err);
+            }
+          }
+
+          // Step 3: Auto-sync any invoices settled offline (IDs starting with BILL-)
+          const unsyncedOrders = localOrders.filter(lo => String(lo.id).startsWith('BILL-'));
+          for (const uo of unsyncedOrders) {
+            try {
+              const res = await fetch(`${API_URL}/billing`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  customerName: uo.customerName,
+                  customerMobile: uo.customerMobile,
+                  items: uo.items.map(i => ({ productId: i.id, name: i.name, price: i.price, qty: i.qty })),
+                  totalAmount: uo.total
+                })
+              });
+              if (res.ok) {
+                const data = await res.json();
+                mappedOrders.push({ ...data.bill, id: data.bill._id, total: data.bill.totalAmount });
+              }
+            } catch (err) {
+              console.error('Failed to sync offline order:', err);
+            }
+          }
+
+          // Step 4: Populate blank backend database with local backups to prevent empty overwrite
+          if (mappedProds.length === 0 && localProds.length > 0) {
+            for (const lp of localProds) {
+              try {
+                const { id, ...prodToSave } = lp;
+                const res = await fetch(`${API_URL}/products`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(prodToSave)
+                });
+                if (res.ok) {
+                  const saved = await res.json();
+                  mappedProds.push({ ...saved, id: saved._id });
+                }
+              } catch (err) {
+                console.error('Failed to sync local data backup to empty server:', err);
+              }
+            }
+          }
+
+          // Step 5: Save final unified, synced data
           setProducts(mappedProds);
           setOrders(mappedOrders);
-          
-          // Backup to LocalStorage for offline use
           localStorage.setItem('apsara_products_backup', JSON.stringify(mappedProds));
           localStorage.setItem('apsara_orders_backup', JSON.stringify(mappedOrders));
         } else {
           throw new Error('Server unreachable');
         }
       } catch (err) {
-        console.warn('Backend connection failed, using local storage.');
-        const localProds = JSON.parse(localStorage.getItem('apsara_products_backup') || '[]');
-        const localOrders = JSON.parse(localStorage.getItem('apsara_orders_backup') || '[]');
-        setProducts(localProds);
-        setOrders(localOrders);
+        console.warn('Backend connection failed, using local storage backups.');
+        const fallbackProds = JSON.parse(localStorage.getItem('apsara_products_backup') || '[]');
+        const fallbackOrders = JSON.parse(localStorage.getItem('apsara_orders_backup') || '[]');
+        setProducts(fallbackProds);
+        setOrders(fallbackOrders);
         if (!isOffline) toast('Using local mode (Offline)', { icon: '📴' });
       } finally {
         setLoading(false);
@@ -203,15 +270,16 @@ export const ShopProvider = ({ children }) => {
   }, [theme]);
 
   const themes = {
-    pink: { hex: '#be185d', secondaryHex: '#fdf2f8', primary: 'pink-600', secondary: 'pink-50', text: 'text-pink-600', bg: 'bg-pink-600', hover: 'hover:bg-pink-700' },
-    blue: { hex: '#2563eb', secondaryHex: '#eff6ff', primary: 'blue-600', secondary: 'blue-50', text: 'text-blue-600', bg: 'bg-blue-600', hover: 'hover:bg-blue-700' },
-    purple: { hex: '#9333ea', secondaryHex: '#f5f3ff', primary: 'purple-600', secondary: 'purple-50', text: 'text-purple-600', bg: 'bg-purple-600', hover: 'hover:bg-purple-700' },
-    emerald: { hex: '#059669', secondaryHex: '#ecfdf5', primary: 'emerald-600', secondary: 'emerald-50', text: 'text-emerald-600', bg: 'bg-emerald-600', hover: 'hover:bg-emerald-700' },
+    pink: { hex: '#831843', secondaryHex: '#fff1f2', primary: 'pink-900', secondary: 'pink-50', text: 'text-pink-900', bg: 'bg-pink-900', hover: 'hover:bg-pink-950' },
+    blue: { hex: '#1e3a8a', secondaryHex: '#eff6ff', primary: 'blue-900', secondary: 'blue-50', text: 'text-blue-900', bg: 'bg-blue-900', hover: 'hover:bg-blue-950' },
+    purple: { hex: '#581c87', secondaryHex: '#f5f3ff', primary: 'purple-900', secondary: 'purple-50', text: 'text-purple-900', bg: 'bg-purple-900', hover: 'hover:bg-purple-950' },
+    emerald: { hex: '#064e3b', secondaryHex: '#ecfdf5', primary: 'emerald-950', secondary: 'emerald-50', text: 'text-emerald-950', bg: 'bg-emerald-950', hover: 'hover:bg-emerald-900' },
+    dark: { hex: '#0f172a', secondaryHex: '#f1f5f9', primary: 'slate-900', secondary: 'slate-400', text: 'text-slate-900', bg: 'bg-slate-900', hover: 'hover:bg-slate-950' }
   };
 
   const translations = {
     en: {
-      mainMenu: "Main Menu", personalize: "Personalize", language: "Language",
+      mainMenu: "Main Menu", personalize: "Personalize", language: "Language", settings: "Settings",
       offlineMode: "Using local mode (Offline)", onlineMode: "Connected (Cloud)",
       dashboard: "Dashboard", billing: "New Bill", inventory: 'Inventory', reports: 'Reports',
       searchProducts: 'Search Products...',
@@ -223,10 +291,13 @@ export const ShopProvider = ({ children }) => {
       noSales: "No sales activity yet.", healthyStock: "Stock levels are healthy! ✓",
       printBill: "Print Bill", pdfDownload: "PDF Download", saleComplete: "Sale Complete!", invoiceGenerated: "Invoice Generated Successfully",
       continueSale: "Continue to Next Sale", thankYou: "Thank you! Visit again.",
-      success: "Sale Completed!", error: "Check details!", shilak: "pcs In Stock", gela: "pcs Sold"
+      success: "Sale Completed!", error: "Check details!", shilak: "pcs In Stock", gela: "pcs Sold",
+      productDetails: "Product Details", unitPrice: "Unit Price", quantity: "Quantity",
+      totalStatus: "Total Status", actions: "Actions", totalItems: "Total Items",
+      categories: "Categories", netWorth: "Net Worth", lowStock: "Critical Stock"
     },
     mr: {
-      mainMenu: "मुख्य मेनू", personalize: "थीम बदला", language: "भाषा निवडा",
+      mainMenu: "मुख्य मेनू", personalize: "थीम बदला", language: "भाषा निवडा", settings: "सेटिंग्ज",
       offlineMode: "ऑफलाइन मोड (पीसीवर सेव्ह होत आहे)", onlineMode: "ऑनलाइन (क्लाउड बॅकअप चालू)",
       dashboard: "डॅशबोर्ड", billing: "नवीन बिल", inventory: "इन्व्हेंटरी", reports: "रिपोर्ट्स",
       searchProducts: 'वस्तू शोधा...',
@@ -238,7 +309,10 @@ export const ShopProvider = ({ children }) => {
       noSales: "अद्याप कोणतीही विक्री नाही.", healthyStock: "स्टॉकची स्थिती चांगली आहे! ✓",
       printBill: "बिल प्रिंट करा", pdfDownload: "PDF डाऊनलोड", saleComplete: "विक्री यशस्वी!", invoiceGenerated: "पावती तयार झाली आहे",
       continueSale: "पुढील बिल सुरू करा", thankYou: "धन्यवाद! पुन्हा भेट द्या.",
-      success: "विक्री यशस्वी!", error: "माहिती तपासा!", shilak: "नग शिल्लक", gela: "नग विक्री"
+      success: "विक्री यशस्वी!", error: "माहिती तपासा!", shilak: "नग शिल्लक", gela: "नग विक्री",
+      productDetails: "वस्तूची माहिती", unitPrice: "किंमत (प्रति नग)", quantity: "शिल्लक साठा",
+      totalStatus: "एकूण विक्री", actions: "क्रिया", totalItems: "एकूण वस्तू",
+      categories: "कॅटेगरी", netWorth: "एकूण स्टॉक किंमत", lowStock: "कमी स्टॉक"
     }
   };
 

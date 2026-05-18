@@ -9,27 +9,27 @@ import { useShop } from '../context/ShopContext';
 
 const StatCard = ({ title, value, icon, color, delay }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay }}
-    className="p-8 glass-card rounded-[38px] flex flex-col justify-between premium-shadow group hover:bg-white transition-all duration-500 min-h-[180px] relative overflow-hidden active:scale-95 cursor-pointer"
+    className="p-4 glass-card rounded-2xl flex flex-col justify-between premium-shadow group hover:bg-white transition-all duration-500 min-h-[120px] relative overflow-hidden active:scale-95 cursor-pointer"
   >
     {/* Decorative blur */}
-    <div className={`absolute -right-8 -top-8 w-28 h-28 rounded-full blur-[40px] opacity-10 transition-all duration-700 group-hover:scale-150 group-hover:opacity-20 ${color.replace('text', 'bg')}`}></div>
+    <div className={`absolute -right-8 -top-8 w-20 h-20 rounded-full blur-[30px] opacity-10 transition-all duration-700 group-hover:scale-150 group-hover:opacity-20 ${color.replace('text', 'bg')}`}></div>
     
     <div className="flex justify-between items-start relative z-10">
-      <div className={`p-4 rounded-[22px] ${color} bg-white shadow-xl shadow-slate-200/50 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
-        {React.cloneElement(icon, { size: 24 })}
+      <div className={`p-2 rounded-xl ${color} bg-white shadow-md shadow-slate-200/50 transform group-hover:scale-110 transition-all duration-500`}>
+        {React.cloneElement(icon, { size: 16 })}
       </div>
-      <div className="p-2 rounded-full hover:bg-slate-50 transition-colors">
-        <ArrowUpRight size={18} className="text-slate-300" />
+      <div className="p-1 rounded-full hover:bg-slate-50 transition-colors">
+        <ArrowUpRight size={12} className="text-slate-300" />
       </div>
     </div>
 
-    <div className="relative z-10 mt-6">
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 leading-relaxed">{title}</p>
+    <div className="relative z-10 mt-3">
+      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1 leading-relaxed">{title}</p>
       <div className="flex items-baseline gap-1">
-        <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none truncate">{value}</h2>
+        <h2 className="text-xl font-black text-slate-800 tracking-tight leading-none truncate">{value}</h2>
       </div>
     </div>
   </motion.div>
@@ -65,41 +65,41 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-10 pb-10">
+    <div className="space-y-5 pb-6">
       {/* Welcome Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-end lg:items-center gap-8 bg-white/40 backdrop-blur-xl p-10 md:p-14 rounded-[48px] border border-white/60 premium-shadow relative overflow-hidden group">
+      <div className="flex flex-col lg:flex-row justify-between items-end lg:items-center gap-4 bg-white/40 backdrop-blur-xl p-5 rounded-[24px] border border-white/60 premium-shadow relative overflow-hidden group">
          <div className="absolute top-[-10%] right-[-5%] w-64 h-64 theme-bg opacity-[0.05] blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000"></div>
          
-         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-            <div className="w-24 h-24 rounded-[32px] theme-bg flex items-center justify-center p-1 shadow-2xl shadow-pink-500/30 group-hover:rotate-12 transition-all duration-700">
-              <div className="w-full h-full bg-white/20 rounded-[24px] backdrop-blur-md flex items-center justify-center">
-                 <Sparkles className="text-white" size={36} />
+         <div className="relative z-10 flex flex-col md:flex-row items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl theme-bg flex items-center justify-center p-0.5 shadow-lg shadow-pink-500/10 group-hover:rotate-12 transition-all duration-700">
+              <div className="w-full h-full bg-white/20 rounded-[14px] backdrop-blur-md flex items-center justify-center">
+                 <Sparkles className="text-white" size={20} />
               </div>
             </div>
             <div className="text-center md:text-left">
-               <h1 className="text-4xl md:text-6xl font-black text-slate-800 leading-none mb-4 tracking-tighter">{t.dashboard}</h1>
-               <div className="flex items-center justify-center md:justify-start gap-4 text-slate-400">
-                  <div className="flex items-center gap-2 bg-white/60 px-4 py-2 rounded-full border border-white text-[10px] font-black uppercase tracking-widest shadow-sm">
-                    <Calendar size={12} className="text-pink-500" />
+               <h1 className="text-2xl md:text-3xl font-black text-slate-800 leading-none mb-1.5 tracking-tighter">{t.dashboard}</h1>
+               <div className="flex items-center justify-center md:justify-start gap-2 text-slate-400">
+                  <div className="flex items-center gap-1.5 bg-white/60 px-3 py-1 rounded-full border border-white text-[9px] font-black uppercase tracking-wider shadow-sm">
+                    <Calendar size={10} className="text-pink-500" />
                     {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </div>
-                  <div className="flex items-center gap-2 bg-white/60 px-4 py-2 rounded-full border border-white text-[10px] font-black uppercase tracking-widest shadow-sm">
-                    <Users size={12} className="text-blue-500" />
+                  <div className="flex items-center gap-1.5 bg-white/60 px-3 py-1 rounded-full border border-white text-[9px] font-black uppercase tracking-wider shadow-sm">
+                    <Users size={10} className="text-blue-500" />
                     Admin Pro
                   </div>
                </div>
             </div>
          </div>
 
-         <div className="hidden lg:flex items-center gap-6 bg-white/80 p-6 rounded-[32px] border border-white shadow-xl shadow-slate-200/50 relative z-10">
-            <div className="w-16 h-16 bg-slate-50 flex items-center justify-center rounded-2xl shadow-inner group/icon">
-               <TrendingUp size={30} className="text-purple-600 group-hover/icon:scale-125 transition-transform" />
+         <div className="hidden lg:flex items-center gap-4 bg-white/80 p-3 rounded-2xl border border-white shadow-lg shadow-slate-200/50 relative z-10">
+            <div className="w-10 h-10 bg-slate-50 flex items-center justify-center rounded-xl shadow-inner group/icon">
+               <TrendingUp size={18} className="text-purple-600 group-hover/icon:scale-125 transition-transform" />
             </div>
             <div>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t.totalRevenue} Today</p>
-               <div className="flex items-center gap-2">
-                 <p className="text-3xl font-black text-slate-800">₹{totalRevenue.toLocaleString()}</p>
-                 <span className="bg-emerald-100 text-emerald-600 text-[10px] font-black px-2 py-1 rounded-lg">+12%</span>
+               <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">{t.totalRevenue} Today</p>
+               <div className="flex items-center gap-1.5">
+                 <p className="text-lg font-black text-slate-800">₹{totalRevenue.toLocaleString()}</p>
+                 <span className="bg-emerald-100 text-emerald-600 text-[8px] font-black px-1.5 py-0.5 rounded">+12%</span>
                </div>
             </div>
          </div>
@@ -138,39 +138,39 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Recent Sales Section */}
-        <div className="lg:col-span-12 xl:col-span-7 space-y-8">
-           <div className="flex items-center justify-between px-6">
-              <h3 className="text-3xl font-black text-slate-800 tracking-tighter flex items-center gap-4 uppercase text-[20px]">
-                <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600"><TrendingUp size={24}/></div>
+        <div className="lg:col-span-12 xl:col-span-7 space-y-4">
+           <div className="flex items-center justify-between px-4">
+              <h3 className="text-xl font-black text-slate-800 tracking-tighter flex items-center gap-2 uppercase">
+                <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600"><TrendingUp size={16}/></div>
                 {t.recentSales}
               </h3>
-              <button className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-pink-600 transition-colors">See Detailed Report</button>
+              <button className="text-[9px] font-black text-slate-400 uppercase tracking-wider hover:text-pink-600 transition-colors">See Detailed Report</button>
            </div>
            
-           <div className="glass-card p-10 rounded-[48px] premium-shadow space-y-4">
+           <div className="glass-card p-4 rounded-3xl premium-shadow space-y-2">
               {orders.slice(0, 5).map((order, idx) => (
                 <motion.div 
-                  initial={{ x: -20, opacity: 0 }}
+                  initial={{ x: -10, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 + (idx * 0.1) }}
+                  transition={{ delay: 0.2 + (idx * 0.05) }}
                   key={order.id} 
-                  className="flex items-center justify-between p-6 hover:bg-slate-50 rounded-[32px] transition-all border border-transparent hover:border-slate-100 group"
+                  className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-2xl transition-all border border-transparent hover:border-slate-100 group"
                 >
-                  <div className="flex items-center gap-6">
-                     <div className="w-16 h-16 bg-white flex items-center justify-center rounded-[24px] shadow-sm group-hover:bg-slate-50 transition-colors">
-                        <span className="text-2xl">🛍️</span>
+                  <div className="flex items-center gap-4">
+                     <div className="w-10 h-10 bg-white flex items-center justify-center rounded-xl shadow-sm group-hover:bg-slate-50 transition-colors">
+                        <span className="text-lg">🛍️</span>
                      </div>
                      <div>
-                        <p className="font-black text-slate-800 text-lg tracking-tight mb-1 group-hover:text-pink-600 transition-colors">{order.customerName}</p>
-                        <div className="flex items-center gap-3">
-                          <span className="text-[9px] font-black bg-slate-100 text-slate-400 px-2 py-1 rounded-lg uppercase tracking-widest group-hover:bg-white group-hover:text-slate-500 transition-all">#{order.id.slice(-6)}</span>
-                          <span className="text-[11px] font-bold text-slate-300">{new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                        <p className="font-black text-slate-800 text-sm tracking-tight mb-0.5 group-hover:text-pink-600 transition-colors">{order.customerName}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[8px] font-black bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded uppercase tracking-wider group-hover:bg-white group-hover:text-slate-500 transition-all">#{String(order.id).slice(-6)}</span>
+                          <span className="text-[10px] font-bold text-slate-300">{new Date(order.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
                         </div>
                      </div>
                   </div>
                   <div className="text-right">
-                     <p className="text-2xl font-black text-slate-800 tracking-tight leading-none mb-1">₹{order.total.toLocaleString()}</p>
-                     <p className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em] bg-emerald-50 px-2 py-1 rounded-md">Paid Successful</p>
+                     <p className="text-base font-black text-slate-800 tracking-tight leading-none mb-1">₹{order.total.toLocaleString()}</p>
+                     <p className="text-[8px] font-black text-emerald-500 uppercase tracking-wider bg-emerald-50 px-1.5 py-0.5 rounded">Paid Successful</p>
                   </div>
                 </motion.div>
               ))}
@@ -186,36 +186,36 @@ const Dashboard = () => {
         </div>
 
         {/* Critical Stock Section */}
-        <div className="lg:col-span-12 xl:col-span-5 space-y-8">
-           <div className="flex items-center justify-between px-6">
-              <h3 className="text-3xl font-black text-slate-800 tracking-tighter flex items-center gap-4 uppercase text-[20px]">
-                <div className="p-3 bg-amber-50 rounded-2xl text-amber-600"><AlertTriangle size={24}/></div>
+        <div className="lg:col-span-12 xl:col-span-5 space-y-4">
+           <div className="flex items-center justify-between px-4">
+              <h3 className="text-xl font-black text-slate-800 tracking-tighter flex items-center gap-2 uppercase">
+                <div className="p-2 bg-amber-50 rounded-xl text-amber-600"><AlertTriangle size={16}/></div>
                 {t.criticalStock}
               </h3>
            </div>
 
-           <div className="bg-slate-900 p-10 rounded-[48px] shadow-2xl shadow-slate-950/20 space-y-4">
+           <div className="bg-slate-900 p-4 rounded-3xl shadow-2xl shadow-slate-950/20 space-y-2">
               {lowStockProducts.map((p, idx) => (
                 <motion.div 
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.3 + (idx * 0.1) }}
+                  transition={{ delay: 0.3 + (idx * 0.05) }}
                   key={p.id} 
-                  className="flex items-center justify-between p-6 bg-slate-800/50 hover:bg-slate-800 rounded-[32px] border border-slate-700/50 transition-all group cursor-pointer"
+                  className="flex items-center justify-between p-3 bg-slate-800/50 hover:bg-slate-800 rounded-2xl border border-slate-700/50 transition-all group cursor-pointer"
                 >
-                  <div className="flex items-center gap-6">
-                     <div className="w-14 h-14 bg-red-500/10 text-red-500 flex items-center justify-center rounded-2xl group-hover:scale-110 transition-transform">
-                        <AlertTriangle size={20}/>
+                  <div className="flex items-center gap-4">
+                     <div className="w-10 h-10 bg-red-500/10 text-red-500 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">
+                        <AlertTriangle size={14}/>
                      </div>
                      <div>
-                        <p className="font-black text-white text-base tracking-tight mb-1">{p.name}</p>
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{p.category}</p>
+                        <p className="font-black text-white text-sm tracking-tight mb-0.5">{p.name}</p>
+                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-wider">{p.category}</p>
                      </div>
                   </div>
                   <div className="text-right">
-                     <div className="bg-red-500/10 text-red-500 px-4 py-2 rounded-2xl border border-red-500/20">
-                        <p className="text-xl font-black leading-none mb-1">{p.stock}</p>
-                        <p className="text-[8px] font-black uppercase tracking-widest opacity-60">Shilak</p>
+                     <div className="bg-red-500/10 text-red-500 px-3 py-1 rounded-xl border border-red-500/20">
+                        <p className="text-sm font-black leading-none mb-0.5">{p.stock}</p>
+                        <p className="text-[7px] font-black uppercase tracking-wider opacity-60">Shilak</p>
                      </div>
                   </div>
                 </motion.div>

@@ -100,10 +100,10 @@ input, select, textarea {
   body * {
     visibility: hidden;
   }
-  #printable-invoice, #printable-invoice * {
+  #printable-invoice, #printable-invoice *, #printable-bill, #printable-bill * {
     visibility: visible;
   }
-  #printable-invoice {
+  #printable-invoice, #printable-bill {
     position: absolute;
     left: 0;
     top: 0;
